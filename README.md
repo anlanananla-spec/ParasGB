@@ -1,271 +1,267 @@
-# ParasGB Supplementary Materials Repository
+# ParasGB Supplementary Appendix Repository
 
-This repository accompanies the paper **“ParasGB: A Graph Benchmark Suite for Parasitic Estimation on AMS Circuits”** and is intended to serve as a clean, structured home for the paper’s extended materials.
+This repository is a standalone appendix-style companion for the paper **ParasGB: A Graph Benchmark Suite for Parasitic Estimation on AMS Circuits**. It is designed to host the supplementary materials that are difficult to keep in the main manuscript under page limits, especially figures, tables, extended visualizations, and short appendix notes.
 
-It is **not** a training code repository and **not** a standalone dataset release page. Instead, it collects the figures, tables, and supporting visual materials that provide additional detail beyond the main paper. The goal is to make the extended content easy to browse, easy to cite in rebuttal or revision, and easy to maintain during resubmission.
+The scope of this repository is intentionally narrow. It is **not** the training codebase, **not** the full dataset release portal, and **not** a replacement for the paper itself. Instead, it serves as a clean and stable home for the appendix content extracted and reorganized from the `24059` version of the manuscript.
 
-## Overview
+## Repository Goal
 
-ParasGB is an open benchmark for parasitic prediction on circuit graphs derived from real AMS design flows. The benchmark brings together two complementary circuit families:
+The `24059` paper version contains a richer appendix than the conference-length manuscript can accommodate. Those appendix materials are valuable because they provide:
 
-- **Analog circuits**, which emphasize fine-grained parasitic behavior in relatively smaller but highly sensitive designs.
-- **SRAM circuits**, which emphasize scalability, dense interconnect structure, and extremely large graph sizes.
+- detailed dataset statistics for analog and SRAM subsets,
+- full label-distribution figures,
+- additional feature-definition tables,
+- extended benchmark result tables,
+- preprocessing and normalization notes,
+- graph-construction illustrations,
+- and the definition of effective-resistance supervision.
 
-Across these circuit families, the benchmark covers:
+This repository isolates those appendix materials into a dedicated GitHub repository so that readers can browse them directly without searching through the PDF.
 
-- **Node-level prediction**, mainly for ground capacitance (**Cg**).
-- **Edge-level prediction**, including coupling capacitance (**Cc**) and effective resistance (**Reff**).
-- **Classification tasks**, where parasitic values are discretized into bins for coarse-grained prediction.
-- **Regression tasks**, where the objective is direct numerical prediction.
+## What This Repository Contains
 
-The main paper introduces the benchmark definition, dataset construction pipeline, task settings, and core classification results. This repository stores the **extended visual and tabular materials** that further explain the benchmark, data characteristics, preprocessing choices, detailed experiments, and additional technical notes.
+The supplementary content is centered around four kinds of artifacts:
 
-## What is included here
+- **Figures**  
+  High-resolution appendix figures, including label histograms, feature visualizations, conversion diagrams, and workflow illustrations.
 
-The content in this repository is organized around the major groups of supporting material associated with the paper.
+- **Tables**  
+  Appendix tables for dataset statistics, feature definitions, task settings, and extended benchmark results.
 
-### 1. Benchmark usage and evaluation support
+- **Short appendix notes**  
+  Lightweight Markdown documents that explain how to read the figures and tables, and provide context that is too detailed for the main paper.
 
-The paper introduces a unified benchmark interface and evaluator design inspired by OGB-style evaluation. The related supplementary material explains how the benchmark is intended to be used conceptually:
+- **Metadata and manifests**  
+  Optional small files that map figure/table names to paper sections, appendix labels, and released assets.
 
-- the benchmark task taxonomy,
-- dataset naming and split conventions,
-- evaluator usage for different task types,
-- the distinction between analog and SRAM task settings,
-- and the role of standardized metrics such as Accuracy, F1, MAE, and R².
+## Appendix Coverage
 
-In this repository, these materials are represented through explanatory figures, screenshots, workflow diagrams, or compact summary tables rather than executable code.
+This repository is based on the appendix-oriented content of the `24059` manuscript. A practical way to organize the materials is by appendix topic rather than by raw paper figure number.
 
-### 2. Dataset construction details
+### Appendix A: Usage and Benchmark Interface
 
-A major portion of the extended material explains how ParasGB is built from real design flows and how the resulting graph data is organized.
+This section can host supporting materials for benchmark usage, such as:
 
-This includes:
+- a compact workflow figure for loading datasets and evaluators,
+- screenshots or diagrams for the benchmark interface,
+- a small table summarizing task names and metrics,
+- a short user-guide page if a code release is added later.
 
-- circuit sourcing and validation,
-- separation of **analog** and **SRAM** subsets,
-- scale groupings for each family,
-- graph sizes and structural statistics,
-- the definition of prediction targets,
-- and the relationship between topology edges and parasitic labels.
+### Appendix B: Dataset Statistics and Feature Description
 
-For analog circuits, the dataset materials summarize the diversity of circuit blocks and the scale ranges covered by the benchmark. For SRAM circuits, they emphasize the much larger graph scale and the very dense coupling-capacitance edge sets that make these tasks computationally demanding.
+This is one of the most important sections for a supplementary repository. It should collect:
 
-### 3. Label distribution materials
+- analog dataset statistics,
+- SRAM dataset statistics,
+- circuit-scale descriptions,
+- feature-definition tables,
+- label-distribution figures,
+- and any per-circuit or per-subset data summary panels.
 
-The extended materials also provide a much more detailed view of label distributions than can fit in the main text.
+Typical materials from the appendix include:
 
-These materials include visual overviews of:
+- `Table 10`: SRAM graph node feature definitions,
+- detailed distribution figures for analog and SRAM targets,
+- extended descriptions of analog and SRAM circuit families.
 
-- **analog ground capacitance distributions**,
-- **analog effective resistance distributions**,
-- **SRAM ground capacitance distributions**,
-- **SRAM coupling capacitance distributions**,
-- and **SRAM effective resistance distributions**.
+### Appendix C: Preprocessing, Normalization, and Experimental Notes
 
-These distribution plots are important because the benchmark is deliberately challenging: many tasks exhibit long-tailed, highly imbalanced, or sparse label behavior. The corresponding figures and tables in this repository are meant to help readers understand why some tasks are easy in classification but hard in regression, why minority-region prediction remains difficult, and why industrial parasitic data creates distinctive learning challenges.
+This section is the right place for appendix-only support materials such as:
 
-### 4. Preprocessing and experimental configuration
+- normalization workflow figures,
+- class discretization notes,
+- evaluator and metric conventions,
+- split summaries,
+- common hyperparameter tables,
+- hardware or implementation notes.
 
-Another group of extended materials documents how raw values are filtered, normalized, and converted into benchmark-ready prediction targets.
+This section helps the repository remain useful even when the main paper can only keep the most concise version of the benchmark protocol.
 
-These materials cover:
+### Appendix D: Extended Benchmark Results
 
-- valid value filtering for each task,
-- task-specific normalization rules,
-- regression target scaling,
-- class discretization settings,
-- baseline model families,
-- training configuration summaries,
-- and hardware or compute-related settings used for reproducibility.
+This section should collect result tables that are useful but too large for the main paper layout. In the `24059` appendix, that includes extra regression and classification tables that expand the benchmark story beyond the headline results.
 
-This part is especially important because analog and SRAM tasks do not use exactly the same target ranges or preprocessing boundaries. The repository therefore keeps these settings visible and separated from the main narrative of the paper.
+Recommended contents:
 
-### 5. Extended benchmark results
+- analog task result tables,
+- SRAM task result tables,
+- regression-only supplementary results,
+- per-task tables that were omitted for space reasons.
 
-The main paper focuses on the central benchmark story, while the supplementary materials include broader result coverage.
+Examples of appendix-style result tables that fit naturally here:
 
-In particular, the extended materials record:
+- SRAM ground-capacitance node regression,
+- analog ground-capacitance node regression,
+- SRAM coupling-capacitance edge regression,
+- analog effective-resistance edge regression,
+- SRAM effective-resistance classification,
+- and omitted classification tables from the longer manuscript version.
 
-- additional **regression results** beyond the main text,
-- task-by-task result tables,
-- comparisons across node-level and edge-level settings,
-- and short comparative observations about why some architectures behave differently on capacitance and resistance tasks.
+### Appendix E: Limitations
 
-These materials are useful for readers who want to inspect performance more closely, compare classification and regression behavior, or understand which settings remain hardest for current GNN models.
+If you want the repository to feel complete as a standalone appendix companion, this section can include:
 
-### 6. Limitations and future directions
+- a short note on current benchmark scope,
+- what is not released due to confidentiality,
+- process-node or circuit-family coverage limits,
+- and benchmark-design tradeoffs.
 
-The repository also includes materials that discuss the current boundaries of the benchmark and how it may evolve.
+### Appendix F: Future Directions
 
-These materials describe limitations such as:
+This section can hold a short forward-looking note about:
 
-- incomplete process-node coverage,
-- restricted diversity of circuit categories relative to the full IC design space,
-- and limited modeling depth for richer physical effects such as deeper spatial or electromagnetic interactions.
+- broader circuit-family coverage,
+- richer physical modeling,
+- geometry-aware learning,
+- foundation-model directions,
+- or future benchmark extensions.
 
-They also summarize future directions, including:
+### Appendix G: Analog-Specific Graph Construction
 
-- expanding to broader circuit families,
-- improving spatial-geometry-aware modeling,
-- exploring graph foundation models and pretraining,
-- and moving toward tighter integration with practical design workflows.
+This section is well suited for visual materials. It should host:
 
-### 7. Additional graph-construction explanation
+- the analog graph-conversion figure,
+- a step-by-step schematic-to-graph explanation,
+- a node/edge schema table,
+- and optional pseudocode or export notes.
 
-The main paper presents the overall topology-to-graph conversion pipeline, while the extended materials further explain the graph construction procedure for analog circuits in more detail.
+This is where readers can understand how design data and extracted parasitic information are turned into the learnable heterogeneous graphs used in ParasGB.
 
-This part clarifies:
+### Appendix H: Effective Resistance (`Reff`) Definition
 
-- how schematics and post-layout netlists are translated into heterogeneous graphs,
-- the roles of device, pin, and net nodes,
-- how topology edges differ from parasitic supervision edges,
-- and how simplified graph representations preserve useful physical structure while keeping learning tractable.
+This section should explain the `Reff` target clearly and visually. Good supplementary assets here include:
 
-The repository stores the corresponding diagrams and any enlarged versions of these visuals.
+- a workflow diagram for `Reff` generation,
+- a notation table,
+- a short algorithm note,
+- and a compact explanation of the reduced admittance matrix formulation.
 
-### 8. Effective-resistance label generation note
+For many readers, this appendix is essential because `Reff` is not a trivial label copied directly from a single resistor element.
 
-Effective resistance is one of the most technically specific targets in the benchmark, and its construction benefits from a dedicated explanation.
-
-The supporting materials therefore include:
-
-- the rationale behind effective-resistance labels,
-- a matrix-based calculation description,
-- the use of an invertible admittance matrix,
-- Cholesky-based computation steps,
-- and the procedure for generating port-to-port resistance labels efficiently.
-
-These materials are intended to make the resistance-target construction more transparent, especially for readers who are familiar with EDA workflows but want to understand how the benchmark operationalizes this signal for learning.
-
-## How to read this repository
-
-A reader does not need to go through every file in order.
-
-A practical reading path is:
-
-1. Start from the main paper for the benchmark motivation, task definition, and headline results.
-2. Use this repository when you want the extended figures and tables behind the benchmark story.
-3. Look at the dataset and distribution materials first if you want to understand the structure and difficulty of the data.
-4. Look at the preprocessing and experiment materials next if you want to reproduce the benchmark setup or compare against it fairly.
-5. Look at the graph-construction and effective-resistance materials if you want to understand how the targets are generated from circuit representations.
-6. Look at the extended result tables, limitation notes, and forward-looking discussion for a fuller research picture.
-
-## Repository organization
-
-This repository is intentionally lightweight. The files here are meant to support the paper rather than replace it.
+## Suggested Repository Layout
 
 ```text
 .
-├── README.md                 # Main guide to the supplementary contents
+├── README.md
+├── docs/
+│   ├── appendix_A_usage.md
+│   ├── appendix_B_dataset_statistics.md
+│   ├── appendix_C_preprocessing.md
+│   ├── appendix_D_extended_results.md
+│   ├── appendix_E_limitations.md
+│   ├── appendix_F_future_work.md
+│   ├── appendix_G_graph_construction.md
+│   └── appendix_H_reff_definition.md
 ├── figures/
-│   ├── paper/                # Figures already referenced directly in the paper, if mirrored here
-│   └── appendix/             # Additional or extended figures supporting the paper
+│   ├── paper/
+│   └── appendix/
+│       ├── dataset_statistics/
+│       ├── label_distributions/
+│       ├── preprocessing/
+│       ├── graph_construction/
+│       ├── reff_definition/
+│       └── extra_results/
 ├── tables/
-│   ├── analog/               # Tables related to analog circuits
-│   └── sram/                 # Tables related to SRAM circuits
-├── metadata/                 # Optional split summaries, file manifests, naming records, or notes
-├── assets/
-│   └── thumbnails/           # Optional preview images for browsing convenience
-└── docs/                     # Optional short textual notes accompanying specific figure/table groups
+│   ├── analog/
+│   ├── sram/
+│   └── benchmark/
+├── metadata/
+│   ├── figure_manifest.csv
+│   ├── table_manifest.csv
+│   └── appendix_mapping.md
+└── assets/
+    └── thumbnails/
 ```
 
-### Folder purpose
+## Recommended Content Mapping
 
-**`figures/paper/`**
-Stores copies of figures that are already discussed in the paper but are useful to mirror here for easy browsing, especially when higher-resolution versions are needed.
+If you want to populate the repository directly from the `24059` appendix, the following mapping is a practical starting point:
 
-**`figures/appendix/`**
-Stores the extended visual materials that support the paper, such as label-distribution panels, enlarged workflow diagrams, graph-construction illustrations, and technical schematics that are too detailed or too numerous for the main manuscript.
+| Appendix topic | Recommended repository location |
+|---|---|
+| dataset statistics and feature definitions | `docs/appendix_B_dataset_statistics.md`, `tables/analog/`, `tables/sram/` |
+| preprocessing and normalization | `docs/appendix_C_preprocessing.md`, `figures/appendix/preprocessing/` |
+| omitted benchmark result tables | `docs/appendix_D_extended_results.md`, `tables/benchmark/` |
+| analog graph conversion | `docs/appendix_G_graph_construction.md`, `figures/appendix/graph_construction/` |
+| `Reff` algorithm and notation | `docs/appendix_H_reff_definition.md`, `figures/appendix/reff_definition/`, `tables/benchmark/` |
+| label histograms and feature-space figures | `figures/appendix/label_distributions/` |
 
-**`tables/analog/`**
-Stores supplementary tables specific to the analog subset, including circuit statistics, task-specific summaries, and extended benchmark results relevant to analog designs.
+## Key Appendix Assets to Prioritize
 
-**`tables/sram/`**
-Stores supplementary tables specific to the SRAM subset, including large-scale dataset summaries, edge-label statistics, and extended benchmark results relevant to SRAM experiments.
+If the goal is to build a useful GitHub repository quickly, the highest-value materials to upload first are:
 
-**`metadata/`**
-Stores small machine-readable or human-readable support files, such as file manifests, naming conventions, task-index notes, or mapping files that connect figure/table names to sections of the paper.
+1. full label-distribution figures for analog and SRAM tasks,
+2. SRAM feature-definition table,
+3. supplementary regression and classification result tables,
+4. analog graph-conversion figure,
+5. `Reff` definition figure and notation table,
+6. one dataset-statistics table each for analog and SRAM.
 
-**`docs/`**
-Stores short companion notes only when a figure or table group needs a little extra explanation. The README remains the main entry point, while the `docs/` folder can be used for targeted technical clarifications.
+These materials carry most of the information that is usually cut from the main paper for page-limit reasons.
 
-## What this repository does not try to do
+## Suggested File Naming
 
-To keep the scope clear, this repository is intentionally limited.
+Use stable descriptive names instead of raw manuscript screenshots. A consistent naming scheme makes the repository much easier to browse and maintain.
 
-It does **not** aim to:
+Recommended conventions:
 
-- serve as the full benchmark toolkit,
-- duplicate the main manuscript,
-- replace a formal dataset release,
-- provide training scripts or environment setup,
-- or function as a long narrative document independent of the paper.
-
-Its role is narrower and more practical: it is the structured home for the **supporting figures, tables, and concise explanatory notes** that make the paper easier to inspect.
-
-## Suggested file types to place here
-
-The repository is best suited for:
-
-- figure panels in `.png`, `.jpg`, or `.pdf`,
-- benchmark tables in `.csv`, `.xlsx`, or exported `.pdf`,
-- compact supplementary notes in `.md`,
-- and small metadata files such as manifests or naming maps in `.json`, `.yaml`, or `.txt`.
-
-## Suggested naming style
-
-A consistent naming scheme makes the repository much easier to use. A practical convention is to group files by content instead of by manuscript appendix label.
+- figures: `fig_<appendix>_<topic>_<subset>.<ext>`
+- tables: `table_<appendix>_<topic>_<subset>.<ext>`
+- docs: `appendix_<letter>_<topic>.md`
 
 Examples:
 
-- `figures/appendix/analog_cg_distribution_all_cases.png`
-- `figures/appendix/analog_reff_distribution_all_cases.png`
-- `figures/appendix/sram_cc_distribution_all_cases.png`
-- `figures/appendix/analog_graph_construction.png`
-- `tables/analog/analog_dataset_statistics.csv`
-- `tables/sram/sram_dataset_statistics.csv`
-- `tables/sram/sram_edge_regression_results.csv`
-- `metadata/file_manifest.csv`
+- `fig_B_analog_label_distribution.png`
+- `fig_B_sram_cc_distribution.png`
+- `fig_G_analog_graph_conversion.png`
+- `fig_H_reff_algorithm_overview.png`
+- `table_B_sram_feature_definition.csv`
+- `table_D_sram_cg_node_regression.csv`
+- `table_D_analog_reff_edge_regression.csv`
 
-This keeps the repository readable even if the paper structure changes during resubmission.
+## Reading Guide
 
-## Relationship to the paper
+Readers do not need to open every file in order. A compact reading path is:
 
-The main manuscript should be treated as the primary scientific narrative.
+1. read the main paper for the benchmark motivation and core contributions,
+2. open Appendix B materials for dataset coverage and feature definitions,
+3. open Appendix D tables for the extended results,
+4. use Appendix G and H for the two most technical construction details,
+5. refer to Appendix C when reproduction details are needed.
 
-This repository is best understood as the **extended reference layer** for that narrative. When the paper mentions that additional details are available, those details can be stored here in a cleaner, more inspectable form. In that sense, this repository functions as a companion archive for:
+## What This Repository Does Not Try to Do
 
-- extended dataset statistics,
-- detailed label-distribution panels,
-- preprocessing notes,
-- full result tables,
-- graph-construction illustrations,
-- and technical notes on label generation.
+To keep the repository focused, it should not try to become:
 
-## Anonymity note
+- the official training framework,
+- a full benchmark website,
+- a replacement for the main manuscript,
+- or a dump of every internal artifact from the design flow.
 
-If this repository is used during anonymous review, all materials should remain anonymized.
+Its role is simpler: it is an appendix repository for figures, tables, and concise supplementary explanations.
 
-Please avoid including:
+## Anonymity Note
 
-- author names,
-- institution names,
-- personal GitHub identifiers,
-- internal project paths,
-- links that reveal identity,
-- or figure/table watermarks that disclose authorship.
+If this repository is used during anonymous review, keep it neutral:
 
-A neutral public-facing repository title and neutral file naming are recommended until the review process is complete.
+- do not include author names,
+- do not add personal GitHub links,
+- do not include institutional logos,
+- do not expose identifying acknowledgements,
+- and avoid metadata that reveals authorship.
 
 ## Citation
 
-If the paper is accepted and the repository remains public, a standard citation block for the final paper can be added here.
+You can keep a placeholder citation during review and replace it after acceptance:
 
-For the anonymous review stage, a placeholder citation or no citation block at all is usually safer.
+```bibtex
+@article{parasgb,
+  title   = {ParasGB: A Graph Benchmark Suite for Parasitic Estimation on AMS Circuits},
+  author  = {Anonymous Authors},
+  year    = {2026}
+}
+```
 
-## Final note
+## Current Status
 
-This repository is designed so that a reader can quickly understand **what supplementary content exists, why it matters, and where to find it**, without having to infer structure from scattered appendix references.
-
-Once the corresponding figures and tables are added, this README should be sufficient as the main guide for browsing the extended materials.
+This repository currently serves as the entry point for reorganizing the appendix content from the `24059` manuscript into a standalone supplementary GitHub archive. The next step is to populate the `figures/`, `tables/`, and `docs/` folders with the final exported appendix assets.
