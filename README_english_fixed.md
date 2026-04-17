@@ -649,7 +649,7 @@ Performance of different models on the SRAM effective-resistance node classifica
 
 ## 5. Analog Topology-to-Graph
 
-![Analog2Graph](imgs/analog2graph.png)
+![Analog2Graph](IMGS/analog2graph.png)
 
 The conversion from analog circuit schematics to graph representations follows the framework shown in the figure. We model each circuit as a heterogeneous graph $\mathcal{G}=(\mathcal{V},\mathcal{E})$. The node set $\mathcal{V}$ contains three types of nodes: *device nodes* representing circuit components, *net nodes* representing interconnect wires, and *pin nodes* representing device terminals. The topological edges $\mathcal{E}_{\text{topo}}$ (shown as black lines) capture circuit connectivity derived from the schematic, specifically through *device-to-pin* and *pin-to-net* connections; these topological relations constitute the input structure obtained from the schematic-to-graph transformation.
 
