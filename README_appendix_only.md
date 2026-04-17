@@ -129,40 +129,11 @@ print(f"MAE = {metrics['mae']:.4f}")
 
 ---
 
-## B. Dataset Details
+## 1. Dataset Details
 
-### B.1 SRAM Features
+### 1.1 SRAM 
 
 SRAM 子集采用**统计聚合型特征**，重点描述全局拓扑与器件分布，而不是保留过细的局部器件细节。这样做是为了在超大图场景中控制特征维度，同时仍保留对物理结构有意义的统计信息。
-
-#### Device 特征
-
-- `Mmos`：晶体管倍数
-- `L` / `W`：晶体管长度 / 宽度
-- `Mres` / `Lres` / `Wres`：电阻相关统计
-- `Mcap` / `Lr` / `Nr`：电容相关统计
-- `Np`：器件端口数
-- `T`：器件类型编码
-
-#### Net 特征
-
-- 连接晶体管数量：`Nmos`
-- 连接 gate / source-drain / bulk 数量：`Ng`, `Nsd`, `Nb`
-- 晶体管总宽度 / 总长度：`Wtot`, `Ltot`
-- 电容数量与聚合尺寸：`Ncap`, `Lrtot`, `Nrtot`
-- 电阻数量与聚合尺寸：`Nres`, `Wtot,res`, `Ltot,res`
-- 端口数：`Nport`
-
-#### Pin 特征
-
-- MOS 的引脚类型（G / D / S / B）
-
-### B.2 Datasets Introduction
-
-ParasGB 的附录将数据集分为两大类：
-
-#### 1) SRAM 子集
-
 SRAM 数据的核心特点是：
 
 - 图规模极大
@@ -180,23 +151,95 @@ SRAM 数据的核心特点是：
 - `ultra8t`：面向亚阈值低功耗优化的 8T SRAM
 - `array 128 32 8t`：数据集中最大的阵列之一，用于极限压力测试
 
-#### 2) Analog 子集
+SRAM电路图节点特征定义为：
+### Definition of SRAM Circuit Graph Node Features
 
-Analog 数据规模更小，但器件级物理描述更加精细，包含：
+#### Device
 
-- 晶体管宽度 `W`
-- 晶体管长度 `L`
-- 与隔离区边缘相关的 LDE 信息
-- 商业 PEX 工具提取的寄生参数
+| Type | Feature | Definition | Index |
+| --- | --- | --- | --- |
+| Device | $M_{mos}$ | Multiplier of transistors | 0 |
+| Device | $L$ | Length of the transistor | 1 |
+| Device | $W$ | Width of the transistor | 2 |
+| Device | $M_{res}$ | Multiplier of connected resistors | 3 |
+| Device | $L_{res}$ | Length of resistor | 4 |
+| Device | $W_{res}$ | Width of resistor | 5 |
+| Device | $M_{cap}$ | Multiplier of connected capacitor | 6 |
+| Device | $L_{r}$ | Length of capacitor | 7 |
+| Device | $N_{r}$ | Number of capacitor fingers | 8 |
+| Device | $N_{p}$ | Number of ports in the device instance | 9 |
+| Device | $T$ | Type code of the device instance | 10 |
 
-这类电路对噪声和寄生误差高度敏感，因此更适合考察模型对**细粒度物理行为**的建模能力。
+#### Net
 
-附录中逐一列出了 20 个 analog case 的来源与功能简介，覆盖：
+| Type | Feature | Definition | Index |
+| --- | --- | --- | --- |
+| Net | $N_{mos}$ | Number of connected transistors | 0 |
+| Net | $N_{g}$ | Number of connected gate terminals | 1 |
+| Net | $N_{sd}$ | Number of connected source/drain terminals | 2 |
+| Net | $N_{b}$ | Number of connected base terminals | 3 |
+| Net | $W_{tot}$ | Total width of connected transistor | 4 |
+| Net | $L_{tot}$ | Total length of connected transistor | 5 |
+| Net | $N_{cap}$ | Number of connected capacitors | 6 |
+| Net | $Lr_{tot}$ | Total length of connected capacitors | 7 |
+| Net | $Nr_{tot}$ | Total number of connected capacitor fingers | 8 |
+| Net | $N_{res}$ | Number of connected resistors | 9 |
+| Net | $W_{tot,res}$ | Total width of connected resistors | 10 |
+| Net | $L_{tot,res}$ | Total length of connected resistors | 11 |
+| Net | $N_{port}$ | Number of connected ports | 12 |
 
-- LVDS
-- OP（运放）
-- BGR（带隙基准）
-- LDO（低压差稳压器）
+#### Pin
+
+| Type | Feature | Definition | Index |
+| --- | --- | --- | --- |
+| Pin | -- | Pin types (G/D/S/B for MOS) | 0 |
+
+#### 1.2 Analog
+
+Analog数据集与SRAM数据集不同，模拟电路更小，但在器件级具有非常详细的物理特性描述。关键参数，如器件通道宽度W、长度L、源漏区到隔离槽边缘的距离
+(LDE效应)都包含在节点特征系统中。电路寄生参数通过商用PEX工具提取。由于模拟电路对噪声高度敏感，即使很小的寄生参数预测误差也会导致电路
+仿真结果偏离预期
+列出了 20 个 analog case 的来源与功能简介，覆盖：
+-ID 1:低压差分信号电路，它将低频参考(5-27 MHz)转换为高频时钟(100-700 MHz)，具有最小的相位噪声，用于精确定时应用(Leung & Mok, 2003b)。
+-ID 2:运算放大器电路，它利用准线性温度特性，从仅0.56V的超低电源产生稳定的0.4V参考电压，仅消耗4.8 μ a电流(Wang & Ye, 2006)。
+-ID 3:带隙参考电路，它通过利用自级联编码复合晶体管和单个电阻产生稳定的参考电压(靠近硅带隙)，实现25.3 ppm/°C的低温系数，电流仅为25 μ a
+(Colombo et al.， 2012)。
+ID 4:带隙参考电路，它利用电阻细分和无电阻方法产生高度稳定的910.88 mV参考电压，超低温系数为12.99 ppm/°C
+(Koh & Lee, 2014)。
+•ID 5:低差稳压电路，它通过平衡N/ p型mosfet的温度特性，为LDO稳压器产生稳定的参考电压，在9.7 μ a的低电源电流下
+实现36.9 ppm/°C的温度系数(Leung & Mok, 2003a)。
+•ID 6:低差稳压电路，它提供了一个稳定的输出从一个1.8-4.5V的电源快速瞬态响应和最小的补偿电容(7 pF)，支持高达100
+mA的负载电流与0.2 V的低压降(Ho & Mok, 2010a)。
+•ID 7:低差稳压电路，它通过平衡N/ p型mosfet的温度特性，为LDO稳压器产生稳定的参考电压，在9.7 μ a的低电源电流下
+实现36.9 ppm/°C的温度系数(Leung & Mok, 2003a)。
+•ID 8:低差稳压电路，它利用自适应补偿缓冲器(ACB)在通路晶体管之间动态切换，在宽负载范围(0至30 mA)内实现稳定运
+行，无需外部电容器，同时保持6 μ a的低静态电流(Tan等人，2025)。
+•ID 9:低差稳压电路，它利用三环架构实现超快速瞬态响应(1.15 ns)，并保持清洁电源，具有全频谱电源抑制(PSR >−12 dB，
+高达20 GHz)，同时仅消耗50 μ a的静态电流(Lu等人，2015)。
+•ID 10:运算放大器电路，它提供了一个灵活的，一步一步的方法来平衡噪声性能和功耗，提供比以前的方法更大的设计控
+制，多条件SPICE模拟验证(Mahattanakul & Chutichatuporn, 2005)。
+•ID 11:低差稳压电路，它利用两个并行有源反馈路径创建两个极零对，与单路径方法相比，提供卓越的稳定性和瞬态响应，
+同时支持100 ma负载，只有14 μ a的静态电流(Li等人，2020a)。
+•ID 12:低差稳压电路，它利用高增益，三级误差放大器，即使在超低电压(0.5 V电源)下使用不饱和通管也能保持精确的调
+节，实现11.4 a /mm的电流密度2和-62 dB的低频PSR (Kim & Cho, 2023)。
+•id 13:运算放大器电路，它用有源结构取代了传统的米勒补偿，消除了右半平面(RHP)零，并引入了左半平面(LHP)零来抵
+消第一个非主导极点，从而使单位增益频率增加9.4倍，补偿电容器明显更小(Tan & Zhou，2011)。
+•ID 14:带隙参考电路，它利用四个mosfet，两个横向PNP晶体管和一个阱电阻的组合，产生稳定的16 μ a输出电流，温度系
+数为105 ppm/°C，不需要外部带隙参考或修整过程补偿(Osipov & Paul, 2017)。
+•ID 15:低差稳压电路，它利用阻尼零补偿技术和慢速增强电路实现稳定和快速瞬态，片上电容仅为1.5 pF，支持100 mA负
+载和200 mV差(Ho & Mok, 2010b)。
+•ID 16:低差稳压电路，它利用WCF电路在非常宽的负载电流(高达100 mA)和负载电容(470 pF至10 nF)范围内保持快速瞬态
+响应和稳定的电压调节，而功耗仅为14.4µa (Wang等人，2016)。
+•ID 17:低差稳压电路，它利用嵌套自适应FVF结构实现超快速瞬态响应(处理负载步骤从1 μ A到20 mA，仅需10 ps)，同时
+显着提高PSR (1 MHz时−58.52 dB)和线路调节(Li等人，2020b)。
+•ID 18:低差稳压电路，它提供稳定的输出，具有高直流增益(101 dB)和精确的带隙参考，以支持0.5 v压差的大电流负载(高
+达450 mA)，同时保持固体电源抑制(100 Hz时54.5 dB) (Mart´ınez-Garc´ıa等人，2013)。
+•ID 19:带隙参考电路，它利用尺寸相关效应来抵消工艺引起的阈值电压变化，实现192 pW的超低功耗和高度稳定的性能(0.
+53%的工艺变化)，而无需加工后修整(Ji等人，2019)。
+•ID 20:带隙参考电路，它使用超低功耗架构产生稳定的参考电压，其中大部分5 μ a电流专用于输出，从1 V电源实现温度
+系数< 10 ppm/°C，而不需要高面积运算放大器(Edward, 2009)。
+
+
 
 ### B.3 Dataset Labels
 
@@ -208,7 +251,7 @@ Analog 数据规模更小，但器件级物理描述更加精细，包含：
 - **Analog Cg**：20 个 analog 电路的地电容分布
 - **SRAM Cg**：6 个 SRAM 电路的地电容分布
 
-附录总结出的主要现象：
+总结出的主要现象：
 
 - 地电容标签普遍呈现**明显长尾分布**
 - SRAM 的标签跨度更大，回归更难
