@@ -663,35 +663,97 @@ mA的负载电流与0.2 V的低压降(Ho & Mok, 2010a)。
 | CirGPS | 0.7832 | 0.7211 | 0.5692 | 0.4011 | 0.8250 | 0.4732 | 0.9989 | 0.8336 |
 | CircuitGCL | 0.8842 | 0.8734 | 0.9918 | 0.4980 | 0.4385 | 0.3691 | 0.9987 | 0.4997 |
 
+## 5.Analog topoologytograph
+
+![Analog2Graph](imgs/analog2graph.png)
+
+The conversion from analog circuit schematics to graph representations follows the framework shown in the figure. We model each circuit as a heterogeneous graph $\mathcal{G}=(\mathcal{V},\mathcal{E})$. The node set $\mathcal{V}$ contains three types of nodes: \emph{device nodes} representing circuit components, \emph{net nodes} representing interconnect wires, and \emph{pin nodes} representing device terminals. The topological edges $\mathcal{E}_{\text{topo}}$ (shown as black lines) capture circuit connectivity derived from the schematic, specifically through \emph{device-to-pin} and \emph{pin-to-net} connections; these topological relations constitute the input structure obtained from the schematic-to-graph transformation. 
+In contrast, parasitic information is obtained from the extracted parasitic netlist. Blue \emph{pin-to-pin} edges are treated as resistive edges, where the label corresponds to the effective resistance between two pins (details in Appendix~\ref{app:algorithm}). In addition, we assign the total ground capacitance of each net as a node-level label on the corresponding net node. These parasitic labels serve as prediction targets in our benchmark.
+
+
+## 6.Algorithms
+
+### 6.1 Matrix-Based Effective Resistance Calculation
+
+### 核心思想
+
+1. 根据电阻网表构建节点导纳矩阵 `G`
+2. 将每个电阻 `r` 转换为电导 `g = 1/r`
+3. 按照 KCL 更新矩阵的对角与非对角项
+4. 去除参考节点（通常为地）对应的行列，得到可逆导纳矩阵
+5. 通过可逆导纳矩阵的 **Cholesky 分解逆** 计算任意两节点的有效电阻
+### Algorithm: Matrix-Based Effective Resistance Calculation
+
+**Input**
+- Resistor list `R` of a net
+- Port list `P`
+
+**Output**
+- Effective resistance list `L_out = {(src, dst, val)}`
+
+```text
+Initialize:
+    L_out <- empty
+    V <- ExtractUniqueNodes(R)
+    N <- |V|
+
+    if N < 2 or |P| < 2:
+        return empty
+
+    M <- MapNodesToIndices(V)
+
+Stage 1: Construct invertible admittance matrix
+    G <- zero matrix of size N x N
+
+    for each (n1, n2, r) in R:
+        g <- 1 / r
+        u <- M[n1]
+        v <- M[n2]
+
+        G[u, u] <- G[u, u] + g
+        G[v, v] <- G[v, v] + g
+        G[u, v] <- G[u, v] - g
+        G[v, u] <- G[v, u] - g
+
+    ref <- N - 1
+    G_red <- G[0:ref, 0:ref]
+
+Stage 2: Compute inverse Cholesky factor and port-to-port resistances
+    Compute Cholesky factor L from G_red, where:
+        G_red = L L^T
+
+    Z <- L^(-1)
+
+    for k = 0 to |P| - 1:
+        for l = k + 1 to |P| - 1:
+            src_id <- P[k]
+            dst_id <- P[l]
+
+            z_src <- column M[src_id] of Z
+            z_dst <- column M[dst_id] of Z
+
+            R_eq <- ||z_src - z_dst||^2
+
+            add (src_id, dst_id, R_eq) to L_out
+
+    return L_out
+
+
+
+
 ## E. Limitations
 
-附录明确列出当前 ParasGB 的几项限制：
-
-### 1. Circuit Type 覆盖不足
-
-当前主要覆盖 SRAM 和部分 analog 模块，尚不能覆盖：
-
-- 复杂数字逻辑
-- 大规模 SoC
-- 更多工业场景中的异构版图风格
-
-### 2. 高精度回归仍然困难
-
-寄生参数标签存在显著长尾分布，极值样本难预测。分箱分类虽然降低了难度，但只是折中方案；工业场景所需的高精度回归仍未解决。
-
-### 3. 缺少跨工艺节点验证
-
-当前数据主要来自特定先进工艺，尚不能充分验证模型在不同节点（如 28nm 到 5nm）之间的泛化能力。
-
-### 4. 深层物理交互建模不足
-
-现有特征更偏向坐标和器件尺寸，对以下因素建模不够：
-
-- 热效应
-- 多层金属间复杂电磁耦合
-- 更深层的 3D 物理交互
-
----
+虽然ParasGB填补了电路寄生效应基准测试领域的研究空白，但仍有几个优化方向作为该方向的早期探索成果。
+电路类型覆盖不足。目前的ParasGB数据集主要涵盖SRAM和特定的模拟电路模块，这是典型的，但不能涵盖所有场景下的工业设计需求。例如，复杂数
+字逻辑电路和超大规模SoC系统的布局风格和互连逻辑与模拟电路存在显著差异，如果将基于现有数据集训练的模型直接迁移到数字电路场景中，预测
+性能可能会显著降低。
+回归预测的准确性挑战。寄生参数表现出显著的长尾分布特征，导致数值极端样本(最大值或最小值)的预测出现误差。虽然通过离散化(分箱)方法降低了
+任务的难度，但该方案是一种折衷策略。工业级应用对高精度数值回归的需求仍未得到满足，这是当前算法面临的核心挑战。
+缺乏跨技术节点的验证。目前的数据集主要来源于特定的先进技术，半导体行业中不同世代技术(如28nm到5nm)的物理性质和设计规则差异很大。由于
+缺乏大规模的跨技术比较数据，难以充分验证模型在新技术节点下的迁移性能，这限制了模型在不同代工厂之间的泛化能力。
+物理交互建模的深度有限。当前节点特征主要包含空间坐标和器件尺寸信息，而在实际芯片中，局部热效应和多层金属之间复杂的电磁耦合等深度物理
+效应会影响寄生参数。虽然现有的图结构可以对拓扑连接关系进行建模，但这种深度物理相互作用在三维空间中的建模深度不足，一些关键的物理特征
+可能会被忽略。
 
 ## F. Future Directions
 
