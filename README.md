@@ -746,11 +746,11 @@ The procedure consists of three stages:
 33: end for
 34: return L_out
 
+```
+</details>
 
 
-
-
-## E. Limitations
+## 7. Limitations
 
 虽然ParasGB填补了电路寄生效应基准测试领域的研究空白，但仍有几个优化方向作为该方向的早期探索成果。
 电路类型覆盖不足。目前的ParasGB数据集主要涵盖SRAM和特定的模拟电路模块，这是典型的，但不能涵盖所有场景下的工业设计需求。例如，复杂数
@@ -764,8 +764,7 @@ The procedure consists of three stages:
 效应会影响寄生参数。虽然现有的图结构可以对拓扑连接关系进行建模，但这种深度物理相互作用在三维空间中的建模深度不足，一些关键的物理特征
 可能会被忽略。
 
-## F. Future Directions
-
+## 8. Future Directions
 
 ### 1. Graph Foundation Model 预训练
 
