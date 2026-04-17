@@ -671,20 +671,37 @@ The conversion from analog circuit schematics to graph representations follows t
 In contrast, parasitic information is obtained from the extracted parasitic netlist. Blue \emph{pin-to-pin} edges are treated as resistive edges, where the label corresponds to the effective resistance between two pins (details in Appendix~\ref{app:algorithm}). In addition, we assign the total ground capacitance of each net as a node-level label on the corresponding net node. These parasitic labels serve as prediction targets in our benchmark.
 
 
-## 6.Algorithms
+## 6. Algorithms
 
 ### 6.1 Matrix-Based Effective Resistance Calculation
 
-### 核心思想
+> **Purpose.** Compute port-to-port effective resistance efficiently from the resistor netlist by constructing the nodal admittance matrix and querying pairwise resistances through its Cholesky factorization.
 
-1. 根据电阻网表构建节点导纳矩阵 `G`
-2. 将每个电阻 `r` 转换为电导 `g = 1/r`
-3. 按照 KCL 更新矩阵的对角与非对角项
-4. 去除参考节点（通常为地）对应的行列，得到可逆导纳矩阵
-5. 通过可逆导纳矩阵的 **Cholesky 分解逆** 计算任意两节点的有效电阻
+#### Overview
 
+The procedure consists of three stages:
 
-### Algorithm 1. Matrix-Based Effective Resistance Calculation
+1. **Build the nodal admittance matrix**
+   - Traverse all resistor elements in the net.
+   - Convert each resistance value `r` into conductance `g = 1 / r`.
+   - Update diagonal and off-diagonal entries according to Kirchhoff's Current Law (KCL).
+
+2. **Construct the reduced invertible matrix**
+   - Select one reference node, usually the ground node.
+   - Remove the corresponding row and column from the admittance matrix.
+   - Obtain the reduced admittance matrix `G_red`.
+
+3. **Query effective resistances between ports**
+   - Compute the Cholesky factor `L` such that `G_red = L L^T`.
+   - Use `Z = L^{-1}` to derive pairwise effective resistances.
+   - For each port pair, compute `R_eq = ||z_src - z_dst||^2`.
+
+#### Pseudocode
+
+<details>
+<summary><strong>Algorithm 1. Matrix-Based Effective Resistance Calculation</strong></summary>
+
+<br>
 
 **Input:** Resistor list `R` of a net, port list `P`  
 **Output:** Effective resistance list `L_out = {(src, dst, val)}`
@@ -698,7 +715,7 @@ In contrast, parasitic information is obtained from the extracted parasitic netl
 6:  end if
 7:  M <- MapNodesToIndices(V)
 
-8:  // Stage 1: Construct invertible admittance matrix
+8:  // Stage 1: Build admittance matrix
 9:  G <- 0_{N×N}
 10: for each (n1, n2, r) in R do
 11:     g <- 1 / r
@@ -708,14 +725,15 @@ In contrast, parasitic information is obtained from the extracted parasitic netl
 15:     G[u,v] <- G[u,v] - g
 16:     G[v,u] <- G[v,u] - g
 17: end for
+
 18: ref <- N - 1
 19: G_red <- G[0:ref, 0:ref]
 
-20: // Stage 2: Compute inverse Cholesky factor
+20: // Stage 2: Cholesky factorization
 21: Compute L such that G_red = L L^T
 22: Z <- L^{-1}
 
-23: // Stage 3: Extract port-to-port effective resistances
+23: // Stage 3: Port-to-port resistance extraction
 24: for k <- 0 to |P| - 1 do
 25:     for l <- k + 1 to |P| - 1 do
 26:         src_id <- P[k]
@@ -726,7 +744,6 @@ In contrast, parasitic information is obtained from the extracted parasitic netl
 31:         append (src_id, dst_id, R_eq) to L_out
 32:     end for
 33: end for
-
 34: return L_out
 
 
