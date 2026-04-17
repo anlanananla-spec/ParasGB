@@ -682,61 +682,26 @@ In contrast, parasitic information is obtained from the extracted parasitic netl
 3. 按照 KCL 更新矩阵的对角与非对角项
 4. 去除参考节点（通常为地）对应的行列，得到可逆导纳矩阵
 5. 通过可逆导纳矩阵的 **Cholesky 分解逆** 计算任意两节点的有效电阻
-### Algorithm: Matrix-Based Effective Resistance Calculation
 
-**Input**
-- Resistor list `R` of a net
-- Port list `P`
 
-**Output**
-- Effective resistance list `L_out = {(src, dst, val)}`
+1. Extract all unique nodes from the resistor list.
+2. Return an empty result if the node count or port count is less than 2.
+3. Build the node-to-index mapping.
+4. Initialize the admittance matrix `G`.
+5. For each resistor `(n1, n2, r)`:
+   - Compute conductance `g = 1 / r`
+   - Update diagonal entries of `G`
+   - Update off-diagonal entries of `G`
+6. Select the last node as the reference node.
+7. Remove the reference row and column to obtain `G_red`.
+8. Compute the Cholesky factor `L` such that `G_red = L L^T`.
+9. Compute `Z = L^{-1}`.
+10. For each port pair `(src_id, dst_id)`:
+    - Extract the corresponding columns from `Z`
+    - Compute `R_eq = ||z_src - z_dst||^2`
+    - Append `(src_id, dst_id, R_eq)` to the output list
+11. Return the effective resistance list.
 
-```text
-Initialize:
-    L_out <- empty
-    V <- ExtractUniqueNodes(R)
-    N <- |V|
-
-    if N < 2 or |P| < 2:
-        return empty
-
-    M <- MapNodesToIndices(V)
-
-Stage 1: Construct invertible admittance matrix
-    G <- zero matrix of size N x N
-
-    for each (n1, n2, r) in R:
-        g <- 1 / r
-        u <- M[n1]
-        v <- M[n2]
-
-        G[u, u] <- G[u, u] + g
-        G[v, v] <- G[v, v] + g
-        G[u, v] <- G[u, v] - g
-        G[v, u] <- G[v, u] - g
-
-    ref <- N - 1
-    G_red <- G[0:ref, 0:ref]
-
-Stage 2: Compute inverse Cholesky factor and port-to-port resistances
-    Compute Cholesky factor L from G_red, where:
-        G_red = L L^T
-
-    Z <- L^(-1)
-
-    for k = 0 to |P| - 1:
-        for l = k + 1 to |P| - 1:
-            src_id <- P[k]
-            dst_id <- P[l]
-
-            z_src <- column M[src_id] of Z
-            z_dst <- column M[dst_id] of Z
-
-            R_eq <- ||z_src - z_dst||^2
-
-            add (src_id, dst_id, R_eq) to L_out
-
-    return L_out
 
 
 
