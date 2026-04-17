@@ -1,9 +1,6 @@
-# ParasGB Appendix README
+# ParasGB  
 
-> 这个 README **仅整理论文附录内容**，不包含正文摘要、方法主线或主实验表述。
-> 内容按 GitHub 仓库首页的阅读习惯重组，覆盖附录 A–H。
 
----
 
 ## 目录
 
@@ -243,13 +240,293 @@ mA的负载电流与0.2 V的低压降(Ho & Mok, 2010a)。
 
 ### B.3 Dataset Labels
 
-附录重点展示了标签分布图，用于说明 ParasGB 的训练难点：
+标签分布图：
 
 - **Analog Reff**：20 个 analog 电路的有效电阻分布
-- **SRAM Cc**：6 个 SRAM 电路的耦合电容分布
-- **SRAM Reff**：6 个 SRAM 电路的有效电阻分布
+  
+<table>
+  <tr>
+    <td align="center">
+      <img src="IMGS/analog/edge_each_label/case1_RC_edge_normalized.png" width="180"><br>
+      <sub>(a) Case 1</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/edge_each_label/case5_RC_edge_normalized.png" width="180"><br>
+      <sub>(b) Case 2</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/edge_each_label/case7_RC_edge_normalized.png" width="180"><br>
+      <sub>(c) Case 3</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/edge_each_label/case10_RC_edge_normalized.png" width="180"><br>
+      <sub>(d) Case 4</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/edge_each_label/case11_RC_edge_normalized.png" width="180"><br>
+      <sub>(e) Case 5</sub>
+    </td>
+  </tr>
+
+  <tr>
+    <td align="center">
+      <img src="IMGS/analog/edge_each_label/case15_RC_edge_normalized.png" width="180"><br>
+      <sub>(f) Case 6</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/edge_each_label/case17_RC_edge_normalized.png" width="180"><br>
+      <sub>(g) Case 7</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/edge_each_label/case23_RC_edge_normalized.png" width="180"><br>
+      <sub>(h) Case 8</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/edge_each_label/case29_RC_edge_normalized.png" width="180"><br>
+      <sub>(i) Case 9</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/edge_each_label/case39_RC_edge_normalized.png" width="180"><br>
+      <sub>(j) Case 10</sub>
+    </td>
+  </tr>
+
+  <tr>
+    <td align="center">
+      <img src="IMGS/analog/edge_each_label/case42_RC_edge_normalized.png" width="180"><br>
+      <sub>(k) Case 11</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/edge_each_label/case44_RC_edge_normalized.png" width="180"><br>
+      <sub>(l) Case 12</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/edge_each_label/case45_RC_edge_normalized.png" width="180"><br>
+      <sub>(m) Case 13</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/edge_each_label/case55_RC_edge_normalized.png" width="180"><br>
+      <sub>(n) Case 14</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/edge_each_label/case58_RC_edge_normalized.png" width="180"><br>
+      <sub>(o) Case 15</sub>
+    </td>
+  </tr>
+
+  <tr>
+    <td align="center">
+      <img src="IMGS/analog/edge_each_label/case71_RC_edge_normalized.png" width="180"><br>
+      <sub>(p) Case 16</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/edge_each_label/case72_RC_edge_normalized.png" width="180"><br>
+      <sub>(q) Case 17</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/edge_each_label/case74_RC_edge_normalized.png" width="180"><br>
+      <sub>(r) Case 18</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/edge_each_label/case75_RC_edge_normalized.png" width="180"><br>
+      <sub>(s) Case 19</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/edge_each_label/case78_RC_edge_normalized.png" width="180"><br>
+      <sub>(t) Case 20</sub>
+    </td>
+  </tr>
+</table>
+
 - **Analog Cg**：20 个 analog 电路的地电容分布
+  <h3 align="center">Analog RC Node Label Distributions</h3>
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="IMGS/analog/node_each_label/case1_RC_normalized.png" width="180"><br>
+      <sub>(a) Case 1</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/node_each_label/case5_RC_normalized.png" width="180"><br>
+      <sub>(b) Case 2</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/node_each_label/case7_RC_normalized.png" width="180"><br>
+      <sub>(c) Case 3</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/node_each_label/case10_RC_normalized.png" width="180"><br>
+      <sub>(d) Case 4</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/node_each_label/case11_RC_normalized.png" width="180"><br>
+      <sub>(e) Case 5</sub>
+    </td>
+  </tr>
+
+  <tr>
+    <td align="center">
+      <img src="IMGS/analog/node_each_label/case15_RC_normalized.png" width="180"><br>
+      <sub>(f) Case 6</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/node_each_label/case17_RC_normalized.png" width="180"><br>
+      <sub>(g) Case 7</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/node_each_label/case23_RC_normalized.png" width="180"><br>
+      <sub>(h) Case 8</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/node_each_label/case29_RC_normalized.png" width="180"><br>
+      <sub>(i) Case 9</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/node_each_label/case39_RC_normalized.png" width="180"><br>
+      <sub>(j) Case 10</sub>
+    </td>
+  </tr>
+
+  <tr>
+    <td align="center">
+      <img src="IMGS/analog/node_each_label/case42_RC_normalized.png" width="180"><br>
+      <sub>(k) Case 11</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/node_each_label/case44_RC_normalized.png" width="180"><br>
+      <sub>(l) Case 12</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/node_each_label/case45_RC_normalized.png" width="180"><br>
+      <sub>(m) Case 13</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/node_each_label/case55_RC_normalized.png" width="180"><br>
+      <sub>(n) Case 14</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/node_each_label/case58_RC_normalized.png" width="180"><br>
+      <sub>(o) Case 15</sub>
+    </td>
+  </tr>
+
+  <tr>
+    <td align="center">
+      <img src="IMGS/analog/node_each_label/case71_RC_normalized.png" width="180"><br>
+      <sub>(p) Case 16</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/node_each_label/case72_RC_normalized.png" width="180"><br>
+      <sub>(q) Case 17</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/node_each_label/case74_RC_normalized.png" width="180"><br>
+      <sub>(r) Case 18</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/node_each_label/case75_RC_normalized.png" width="180"><br>
+      <sub>(s) Case 19</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/analog/node_each_label/case78_RC_normalized.png" width="180"><br>
+      <sub>(t) Case 20</sub>
+    </td>
+  </tr>
+</table>
+
+- **SRAM Cc**：6 个 SRAM 电路的耦合电容分布
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="IMGS/sram/edge_each_label/array_128_32_8t_normalized.png" width="160"><br>
+      <sub>(a) Array_128_32_8t</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/sram/edge_each_label/digtime_normalized.png" width="160"><br>
+      <sub>(b) Digtime</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/sram/edge_each_label/sandwich_normalized.png" width="160"><br>
+      <sub>(c) Sandwich</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/sram/edge_each_label/ssram_normalized.png" width="160"><br>
+      <sub>(d) SSRAM</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/sram/edge_each_label/timing_ctrl_normalized.png" width="160"><br>
+      <sub>(e) Timing_Ctrl</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/sram/edge_each_label/ultra8t_normalized.png" width="160"><br>
+      <sub>(f) Ultra8t</sub>
+    </td>
+  </tr>
+</table>
+  
+- **SRAM Reff**：6 个 SRAM 电路的有效电阻分布
+  
+<table>
+  <tr>
+    <td align="center">
+      <img src="IMGS/sram/edge_r_each_label/array_128_32_8t_normalized.png" width="160"><br>
+      <sub>(a) Array_128_32_8t</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/sram/edge_r_each_label/digtime_normalized.png" width="160"><br>
+      <sub>(b) Digtime</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/sram/edge_r_each_label/sandwich_normalized.png" width="160"><br>
+      <sub>(c) Sandwich</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/sram/edge_r_each_label/ssram_normalized.png" width="160"><br>
+      <sub>(d) SSRAM</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/sram/edge_r_each_label/timing_ctrl_normalized.png" width="160"><br>
+      <sub>(e) Timing_Ctrl</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/sram/edge_r_each_label/ultra8t_normalized.png" width="160"><br>
+      <sub>(f) Ultra8t</sub>
+    </td>
+  </tr>
+</table>
+
 - **SRAM Cg**：6 个 SRAM 电路的地电容分布
+  
+<table>
+  <tr>
+    <td align="center">
+      <img src="IMGS/sram/node_each_label/array_128_32_8t_normalized.png" width="160"><br>
+      <sub>(a) Array_128_32_8t</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/sram/node_each_label/digtime_normalized.png" width="160"><br>
+      <sub>(b) Digtime</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/sram/node_each_label/sandwich_normalized.png" width="160"><br>
+      <sub>(c) Sandwich</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/sram/node_each_label/ssram_normalized.png" width="160"><br>
+      <sub>(d) SSRAM</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/sram/node_each_label/timing_ctrl_normalized.png" width="160"><br>
+      <sub>(e) Timing_Ctrl</sub>
+    </td>
+    <td align="center">
+      <img src="IMGS/sram/node_each_label/ultra8t_normalized.png" width="160"><br>
+      <sub>(f) Ultra8t</sub>
+    </td>
+  </tr>
+</table>
 
 总结出的主要现象：
 
