@@ -18,9 +18,9 @@
 
 ---
 
-## A. User Guide
+## 1. User Guide
 
-### A.1 Standardized Evaluation Protocol
+### 1.1 Standardized Evaluation Protocol
 
 ParasGB 将数据集与 **PyTorch Geometric (PyG)** 深度集成，目标是让研究者只用少量代码即可完成：
 
@@ -49,7 +49,7 @@ ParasGB 将数据集与 **PyTorch Geometric (PyG)** 深度集成，目标是让�
 
 这样可以更透明地比较不同模型在不同任务上的真实表现。
 
-### A.2 ParasGB Usage
+### 1.2 ParasGB Usage
 
 ParasGB 的核心目标是**降低寄生参数学习研究门槛**。调用方式尽量贴近 PyG，研究者只需指定：
 
