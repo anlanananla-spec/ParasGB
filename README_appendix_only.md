@@ -684,23 +684,50 @@ In contrast, parasitic information is obtained from the extracted parasitic netl
 5. 通过可逆导纳矩阵的 **Cholesky 分解逆** 计算任意两节点的有效电阻
 
 
-1. Extract all unique nodes from the resistor list.
-2. Return an empty result if the node count or port count is less than 2.
-3. Build the node-to-index mapping.
-4. Initialize the admittance matrix `G`.
-5. For each resistor `(n1, n2, r)`:
-   - Compute conductance `g = 1 / r`
-   - Update diagonal entries of `G`
-   - Update off-diagonal entries of `G`
-6. Select the last node as the reference node.
-7. Remove the reference row and column to obtain `G_red`.
-8. Compute the Cholesky factor `L` such that `G_red = L L^T`.
-9. Compute `Z = L^{-1}`.
-10. For each port pair `(src_id, dst_id)`:
-    - Extract the corresponding columns from `Z`
-    - Compute `R_eq = ||z_src - z_dst||^2`
-    - Append `(src_id, dst_id, R_eq)` to the output list
-11. Return the effective resistance list.
+### Algorithm 1. Matrix-Based Effective Resistance Calculation
+
+**Input:** Resistor list `R` of a net, port list `P`  
+**Output:** Effective resistance list `L_out = {(src, dst, val)}`
+
+```text
+1:  L_out <- ∅
+2:  V <- ExtractUniqueNodes(R)
+3:  N <- |V|
+4:  if N < 2 or |P| < 2 then
+5:      return ∅
+6:  end if
+7:  M <- MapNodesToIndices(V)
+
+8:  // Stage 1: Construct invertible admittance matrix
+9:  G <- 0_{N×N}
+10: for each (n1, n2, r) in R do
+11:     g <- 1 / r
+12:     u <- M[n1], v <- M[n2]
+13:     G[u,u] <- G[u,u] + g
+14:     G[v,v] <- G[v,v] + g
+15:     G[u,v] <- G[u,v] - g
+16:     G[v,u] <- G[v,u] - g
+17: end for
+18: ref <- N - 1
+19: G_red <- G[0:ref, 0:ref]
+
+20: // Stage 2: Compute inverse Cholesky factor
+21: Compute L such that G_red = L L^T
+22: Z <- L^{-1}
+
+23: // Stage 3: Extract port-to-port effective resistances
+24: for k <- 0 to |P| - 1 do
+25:     for l <- k + 1 to |P| - 1 do
+26:         src_id <- P[k]
+27:         dst_id <- P[l]
+28:         z_src <- column M[src_id] of Z
+29:         z_dst <- column M[dst_id] of Z
+30:         R_eq <- ||z_src - z_dst||^2
+31:         append (src_id, dst_id, R_eq) to L_out
+32:     end for
+33: end for
+
+34: return L_out
 
 
 
@@ -722,7 +749,6 @@ In contrast, parasitic information is obtained from the extracted parasitic netl
 
 ## F. Future Directions
 
-附录给出了四个未来方向：
 
 ### 1. Graph Foundation Model 预训练
 
@@ -749,67 +775,5 @@ In contrast, parasitic information is obtained from the extracted parasitic netl
 
 从离线 benchmark 走向在线设计辅助，在版图阶段提供寄生参数预警与优化建议。
 
----
 
-## G. Analog Topology-To-Graph
 
-附录 G 描述了 analog 电路从原理图到图表示的转换方式。
-
-### 图的组成
-
-每个电路被建模为异构图 `G = (V, E)`，其中：
-
-- **device nodes**：器件
-- **net nodes**：互连网络
-- **pin nodes**：器件引脚
-
-### 输入拓扑边
-
-黑色拓扑边 `E_topo` 来自原理图连接关系，包括：
-
-- device-to-pin
-- pin-to-net
-
-这些边构成模型输入图。
-
-### 监督标签
-
-寄生信息来自提取后的 parasitic netlist：
-
-- 蓝色 pin-to-pin 边：作为电阻边，标签是两引脚间有效电阻
-- 每个 net 节点：赋予总地电容标签 `Cg`
-
-这些寄生量不作为输入边，而是作为预测目标。
-
----
-
-## H. Algorithms
-
-### H.1 Matrix-Based Effective Resistance Calculation
-
-为了生成高精度物理标签，附录 H 使用**基于矩阵运算的有效电阻计算方法**，而不是昂贵的直接电路仿真。
-
-### 核心思想
-
-1. 根据电阻网表构建节点导纳矩阵 `G`
-2. 将每个电阻 `r` 转换为电导 `g = 1/r`
-3. 按照 KCL 更新矩阵的对角与非对角项
-4. 去除参考节点（通常为地）对应的行列，得到可逆导纳矩阵
-5. 通过可逆导纳矩阵的 **Cholesky 分解逆** 计算任意两节点的有效电阻
-
-### 优点
-
-- 比传统路径搜索法更高效
-- 能支持千万级边标签生成
-- 适合构造 ParasGB 中的大规模 `Reff` 监督信号
-
----
-
-## Appendix-Only Summary
-
-如果把这份附录当作仓库文档来看，它主要补足了正文中没有展开的四类内容：
-
-- **怎么用**：统一 API、loader、evaluator、最小训练样例
-- **数据长什么样**：SRAM/Analog 特征、子集说明、标签分布
-- **实验怎么做**：过滤规则、归一化、基线、超参数、硬件
-- **后续怎么扩展**：局限性、未来方向、图构建细节与 Reff 标签算法
