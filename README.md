@@ -647,13 +647,30 @@ Performance of different models on the SRAM effective-resistance node classifica
 | CirGPS | 0.7832 | 0.7211 | 0.5692 | 0.4011 | 0.8250 | 0.4732 | 0.9989 | 0.8336 |
 | CircuitGCL | 0.8842 | 0.8734 | 0.9918 | 0.4980 | 0.4385 | 0.3691 | 0.9987 | 0.4997 |
 
-## 5. Analog Topology-to-Graph
-
+## 5.Topology-to-Graph
+### 5.1 Analog Topology-to-Graph
 ![Analog2Graph](IMGS/analog2graph.png)
 
 The conversion from analog circuit schematics to graph representations follows the framework shown in the figure. We model each circuit as a heterogeneous graph $\mathcal{G}=(\mathcal{V},\mathcal{E})$. The node set $\mathcal{V}$ contains three types of nodes: *device nodes* representing circuit components, *net nodes* representing interconnect wires, and *pin nodes* representing device terminals. The topological edges $\mathcal{E}_{\text{topo}}$ (shown as black lines) capture circuit connectivity derived from the schematic, specifically through *device-to-pin* and *pin-to-net* connections; these topological relations constitute the input structure obtained from the schematic-to-graph transformation.
 
 In contrast, parasitic information is obtained from the extracted parasitic netlist. Blue *pin-to-pin* edges are treated as resistive edges, where the label corresponds to the effective resistance between two pins (see the algorithm in Section 6). In addition, we assign the total ground capacitance of each net as a node-level label on the corresponding net node. These parasitic labels serve as prediction targets in our benchmark.
+
+### 5.2 Sram Topology-to-Graph
+![Sram2Graph](IMGS/Sram2graph.png)
+
+
+
+The figure illustrates the conversion process from an SRAM circuit schematic to its graph representation. Similar to Figure 1, the circuit is first modeled as a heterogeneous graph, $\mathcal{G}=(\mathcal{V},\mathcal{E})$, where the node set $\mathcal{V}$ consists of three types of nodes: **device nodes**, **net nodes**, and **pin nodes**.
+
+The black topological edges represent the connectivity directly derived from the schematic, including **device-to-pin** and **pin-to-net** relations, which describe the fundamental topology of the SRAM cell.
+
+On top of this topological structure, parasitic information extracted from the post-layout netlist is further incorporated into the graph. Specifically:
+
+- **Blue pin-to-pin edges** denote resistive parasitics, where each edge label corresponds to the effective resistance between two pins.
+- **Orange edges** denote coupling capacitance relations, which characterize the capacitive coupling effects between different pins or nets.
+- In addition, each **net node** is associated with its **total ground capacitance** $C_g$ as a node-level label.
+
+Therefore, the prediction targets in Figure 2 include not only resistance edge labels and net-level ground capacitance labels, but also coupling capacitance edge labels, enabling a more comprehensive representation of parasitic effects in SRAM circuits.
 
 ## 6. Algorithms
 
