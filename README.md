@@ -10,7 +10,7 @@
 - [6. Algorithms](#6-algorithms)
 - [7. Limitations](#7-limitations)
 - [8. Future Directions](#8-future-directions)
-- [9. Minimal Usage Example](#9-Minimal-Usage-Example)
+- [9. Minimal Usage Example](#9-minimal-usage-example)
  
 
 ---
@@ -598,7 +598,8 @@ Performance of different models on the SRAM effective-resistance node classifica
 | CirGPS | 0.7832 | 0.7211 | 0.5692 | 0.4011 | 0.8250 | 0.4732 | 0.9989 | 0.8336 |
 | CircuitGCL | 0.8842 | 0.8734 | 0.9918 | 0.4980 | 0.4385 | 0.3691 | 0.9987 | 0.4997 |
 
-## 5.Topology-to-Graph
+## 5. Topology-to-Graph
+
 ### 5.1 Analog Topology-to-Graph
 ![Analog2Graph](IMGS/analog2graph.png)
 
@@ -740,7 +741,8 @@ Future versions are planned to include:
 
 Move from an offline benchmark toward online design assistance by providing parasitic warnings and optimization suggestions during the layout stage.
 
-## 9.Minimal Usage Example
+
+## 9. Minimal Usage Example
 
 ```python
 from parasgb import RCDataset, Evaluator
