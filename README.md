@@ -6,10 +6,12 @@
 - [2. Dataset Details](#2-dataset-details)
 - [3. Experiment Details](#3-experiment-details)
 - [4. Additional Regression Task Results](#4-additional-regression-task-results)
-- [5. Analog Topology-to-Graph](#5-analog-topology-to-graph)
+- [5. Topology-to-Graph](#5-topology-to-graph)
 - [6. Algorithms](#6-algorithms)
 - [7. Limitations](#7-limitations)
 - [8. Future Directions](#8-future-directions)
+- [9. Minimal Usage Example](#9-Minimal-Usage-Example)
+ 
 
 ---
 
@@ -72,57 +74,6 @@ For SRAM graphs with tens of millions of nodes, the toolkit provides subgraph sa
 - `cg_class`: node-level ground capacitance classification
 - `r_regr`: edge-level effective resistance regression
 - `r_class`: edge-level effective resistance classification
-
-### Minimal Usage Example
-
-```python
-from parasgb import RCDataset, Evaluator
-
-# 1. Load dataset with predefined train/test splits
-# dataset_name: 'sram' or 'analog'
-# task_level: 'node' or 'edge'
-# task_type: 'regression' or 'classification'
-dataset = RCDataset(
-    dataset_name='sram',
-    root='data/',
-    task_level='node',
-    task_type='regression'
-)
-
-# 2. Create DataLoader
-train_loader = dataset.get_dataloader(
-    split='train',
-    batch_size=32,
-    shuffle=True
-)
-
-# 3. Define model and optimizer
-model = MyModel()
-criterion = Loss()
-optimizer = Optimizer(model.parameters())
-
-# 4. Train
-for epoch in range(E):
-    for batch in train_loader:
-        y_pred = model(batch.node_attr, batch.edge_index)
-        loss = criterion(y_pred.squeeze(), batch.y[:, 0])
-        loss.backward()
-        optimizer.step()
-        optimizer.zero_grad()
-
-# 5. Create evaluator
-# Example: SRAM node-level ground capacitance regression
-evaluator = Evaluator(
-    dataset_name='sram',
-    task='cg_regr'
-)
-
-# 6. Evaluate
-metrics = evaluator.evaluate(y_pred, y_true)
-print(f"MAE = {metrics['mae']:.4f}")
-```
-
----
 
 ## 2. Dataset Details
 
@@ -788,3 +739,54 @@ Future versions are planned to include:
 ### 4. Real-Time Guidance for Design Closure
 
 Move from an offline benchmark toward online design assistance by providing parasitic warnings and optimization suggestions during the layout stage.
+
+## 9.Minimal Usage Example
+
+```python
+from parasgb import RCDataset, Evaluator
+
+# 1. Load dataset with predefined train/test splits
+# dataset_name: 'sram' or 'analog'
+# task_level: 'node' or 'edge'
+# task_type: 'regression' or 'classification'
+dataset = RCDataset(
+    dataset_name='sram',
+    root='data/',
+    task_level='node',
+    task_type='regression'
+)
+
+# 2. Create DataLoader
+train_loader = dataset.get_dataloader(
+    split='train',
+    batch_size=32,
+    shuffle=True
+)
+
+# 3. Define model and optimizer
+model = MyModel()
+criterion = Loss()
+optimizer = Optimizer(model.parameters())
+
+# 4. Train
+for epoch in range(E):
+    for batch in train_loader:
+        y_pred = model(batch.node_attr, batch.edge_index)
+        loss = criterion(y_pred.squeeze(), batch.y[:, 0])
+        loss.backward()
+        optimizer.step()
+        optimizer.zero_grad()
+
+# 5. Create evaluator
+# Example: SRAM node-level ground capacitance regression
+evaluator = Evaluator(
+    dataset_name='sram',
+    task='cg_regr'
+)
+
+# 6. Evaluate
+metrics = evaluator.evaluate(y_pred, y_true)
+print(f"MAE = {metrics['mae']:.4f}")
+```
+
+---
