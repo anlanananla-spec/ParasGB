@@ -1,83 +1,22 @@
-<img width="900" height="335" alt="image" src="https://github.com/user-attachments/assets/85a99abe-b1e3-4a99-abaf-3cca22a438a7" /># ParasGB
+
+# ParasGB
 
 ## Table of Contents
 
-- [1. User Guide](#1-user-guide)
-- [2. Dataset Details](#2-dataset-details)
-- [3. Experiment Details](#3-experiment-details)
-- [4. Additional Regression Task Results](#4-additional-regression-task-results)
-- [5. Topology-to-Graph](#5-topology-to-graph)
-- [6. Algorithms](#6-algorithms)
-- [7. Limitations](#7-limitations)
-- [8. Future Directions](#8-future-directions)
-- [9. Minimal Usage Example](#9-minimal-usage-example)
- 
+- [1. Dataset Details](#1-dataset-details)
+- [2. Topology-to-Graph](#2-topology-to-graph)
+- [3. Algorithms](#3-algorithms)
+- [4. Limitations](#4-limitations)
+- [5. Future Directions](#5-future-directions)
+- [6. Experiment Details](#6-experiment-details)
+- [7. Additional Task Results](#7-additional-task-results)
+- [8. API Usage](#8-api-usage)
 
 ---
 
-## 1. User Guide
+## 1. Dataset Details
 
-### 1.1 Standardized Evaluation Protocol
-
-ParasGB is deeply integrated with **PyTorch Geometric (PyG)** so that researchers can complete the following steps with only a small amount of code:
-
-- dataset download
-- graph data preprocessing
-- task-level data loading
-- standardized evaluation
-
-To support ultra-large circuit graphs, the toolkit provides:
-
-- `NeighborLoader`: for node-level tasks
-- `LinkNeighborLoader`: for edge-level tasks
-
-Both loaders support caching preprocessed graph data on first use, which reduces repeated computation, improves reproducibility, and avoids experimental discrepancies caused by differences in preprocessing logic.
-
-In addition, ParasGB provides a unified `Evaluator` module that follows the OGB style and automatically reports standardized metrics:
-
-- classification tasks: Accuracy / F1
-- regression tasks: MAE / R²
-
-The dataset object also exposes metadata such as:
-
-- train/test splits
-- number of nodes and edges
-- label distributions
-
-This makes it easier to compare the real performance of different models across different tasks in a transparent way.
-
-### 1.2 ParasGB Usage
-
-The core goal of ParasGB is to **lower the barrier to parasitic-parameter learning research**. Its usage style is intentionally close to PyG. Researchers only need to specify:
-
-- dataset name
-- task level (`node` / `edge`)
-- task type (`classification` / `regression`)
-
-The system will then automatically complete raw file download and feature preprocessing.
-
-For SRAM graphs with tens of millions of nodes, the toolkit provides subgraph sampling for limited-memory settings to ensure both training efficiency and stability.
-
-### Task Name Reference
-
-#### SRAM
-
-- `cg_regr`: node-level ground capacitance regression
-- `cg_class`: node-level ground capacitance classification
-- `cc_regr`: edge-level coupling capacitance regression
-- `cc_class`: edge-level coupling capacitance classification
-- `r_class`: edge-level effective resistance classification
-
-#### Analog
-
-- `cg_regr`: node-level ground capacitance regression
-- `cg_class`: node-level ground capacitance classification
-- `r_regr`: edge-level effective resistance regression
-- `r_class`: edge-level effective resistance classification
-
-## 2. Dataset Details
-
-### 2.1 SRAM
+### 1.1 SRAM
 
 The SRAM subset uses **statistically aggregated features**, focusing on global topology and device distribution rather than preserving overly fine-grained local device details. This design controls feature dimensionality in ultra-large-graph scenarios while still retaining physically meaningful statistical information.
 
@@ -142,7 +81,7 @@ The node features of SRAM circuit graphs are defined as follows:
 | --- | --- | --- | --- |
 | Pin | -- | Pin types (G/D/S/B for MOS) | 0 |
 
-### 2.2 Analog
+### 1.2 Analog
 
 Unlike the SRAM dataset, the analog dataset contains smaller circuits but much more detailed device-level physical descriptions. Key parameters, such as device channel width `W`, length `L`, and the distance from the source/drain region to the isolation edge (the LDE effect), are included in the node-feature system. Circuit parasitic parameters are extracted using commercial PEX tools. Because analog circuits are highly sensitive to noise, even very small parasitic prediction errors can cause simulation results to deviate from expectations.
 
@@ -169,7 +108,7 @@ The dataset lists the sources and functional summaries of 20 analog cases, inclu
 - `ID 19`: a bandgap reference circuit that uses size-dependent effects to cancel process-induced threshold-voltage variation, achieving ultra-low power consumption of 192 pW and highly stable performance (0.53% process variation) without post-fabrication trimming (Ji et al., 2019).
 - `ID 20`: a bandgap reference circuit that uses an ultra-low-power architecture to generate a stable reference voltage, with most of the 5 μA current dedicated to output, achieving a temperature coefficient below 10 ppm/°C from a 1 V supply without requiring a large-area operational amplifier (Edward, 2009).
 
-### 2.3 Dataset Labels
+### 1.3 Dataset Labels
 
 Label distribution plots:
 
@@ -469,9 +408,150 @@ Main observations:
 
 ---
 
-## 3. Experiment Details
+## 2. Topology-to-Graph
 
-### 3.1 Data Preprocessing
+### 2.1 Analog Topology-to-Graph
+![Analog2Graph](IMGS/analog2graph.png)
+
+The conversion from analog circuit schematics to graph representations follows the framework shown in the figure. We model each circuit as a heterogeneous graph $\mathcal{G}=(\mathcal{V},\mathcal{E})$. The node set $\mathcal{V}$ contains three types of nodes: *device nodes* representing circuit components, *net nodes* representing interconnect wires, and *pin nodes* representing device terminals. The topological edges $\mathcal{E}_{\text{topo}}$ (shown as black lines) capture circuit connectivity derived from the schematic, specifically through *device-to-pin* and *pin-to-net* connections; these topological relations constitute the input structure obtained from the schematic-to-graph transformation.
+
+In contrast, parasitic information is obtained from the extracted parasitic netlist. Blue *pin-to-pin* edges are treated as resistive edges, where the label corresponds to the effective resistance between two pins (see the algorithm in Section 6). In addition, we assign the total ground capacitance of each net as a node-level label on the corresponding net node. These parasitic labels serve as prediction targets in our benchmark.
+
+### 2.2 Sram Topology-to-Graph
+![Sram2Graph](IMGS/Sram2graph.png)
+
+The figure illustrates the conversion process from an SRAM circuit schematic to its graph representation. Similar to Figure 1, the circuit is first modeled as a heterogeneous graph, $\mathcal{G}=(\mathcal{V},\mathcal{E})$, where the node set $\mathcal{V}$ consists of three types of nodes: **device nodes**, **net nodes**, and **pin nodes**.
+
+The black topological edges represent the connectivity directly derived from the schematic, including **device-to-pin** and **pin-to-net** relations, which describe the fundamental topology of the SRAM cell.
+
+On top of this topological structure, parasitic information extracted from the post-layout netlist is further incorporated into the graph. Specifically:
+
+- **Blue pin-to-pin edges** denote resistive parasitics, where each edge label corresponds to the effective resistance between two pins.
+- **Orange edges** denote coupling capacitance relations, which characterize the capacitive coupling effects between different pins or nets.
+- In addition, each **net node** is associated with its **total ground capacitance** $C_g$ as a node-level label.
+
+Therefore, the prediction targets in Figure 2 include not only resistance edge labels and net-level ground capacitance labels, but also coupling capacitance edge labels, enabling a more comprehensive representation of parasitic effects in SRAM circuits.
+
+## 3. Algorithms
+
+### 3.1 Matrix-Based Effective Resistance Calculation
+
+> **Purpose.** Compute port-to-port effective resistance efficiently from the resistor netlist by constructing the nodal admittance matrix and querying pairwise resistances through its Cholesky factorization.
+
+#### Overview
+
+The procedure consists of three stages:
+
+1. **Build the nodal admittance matrix**
+   - Traverse all resistor elements in the net.
+   - Convert each resistance value `r` into conductance `g = 1 / r`.
+   - Update diagonal and off-diagonal entries according to Kirchhoff's Current Law (KCL).
+
+2. **Construct the reduced invertible matrix**
+   - Select one reference node, usually the ground node.
+   - Remove the corresponding row and column from the admittance matrix.
+   - Obtain the reduced admittance matrix `G_red`.
+
+3. **Query effective resistances between ports**
+   - Compute the Cholesky factor `L` such that `G_red = L L^T`.
+   - Use `Z = L^{-1}` to derive pairwise effective resistances.
+   - For each port pair, compute `R_eq = ||z_src - z_dst||^2`.
+
+#### Pseudocode
+
+<details>
+<summary><strong>Algorithm 1. Matrix-Based Effective Resistance Calculation</strong></summary>
+
+<br>
+
+**Input:** Resistor list `R` of a net, port list `P`  
+**Output:** Effective resistance list `L_out = {(src, dst, val)}`
+
+```text
+1:  L_out <- ∅
+2:  V <- ExtractUniqueNodes(R)
+3:  N <- |V|
+4:  if N < 2 or |P| < 2 then
+5:      return ∅
+6:  end if
+7:  M <- MapNodesToIndices(V)
+
+8:  // Stage 1: Build admittance matrix
+9:  G <- 0_{N×N}
+10: for each (n1, n2, r) in R do
+11:     g <- 1 / r
+12:     u <- M[n1], v <- M[n2]
+13:     G[u,u] <- G[u,u] + g
+14:     G[v,v] <- G[v,v] + g
+15:     G[u,v] <- G[u,v] - g
+16:     G[v,u] <- G[v,u] - g
+17: end for
+
+18: ref <- N - 1
+19: G_red <- G[0:ref, 0:ref]
+
+20: // Stage 2: Cholesky factorization
+21: Compute L such that G_red = L L^T
+22: Z <- L^{-1}
+
+23: // Stage 3: Port-to-port resistance extraction
+24: for k <- 0 to |P| - 1 do
+25:     for l <- k + 1 to |P| - 1 do
+26:         src_id <- P[k]
+27:         dst_id <- P[l]
+28:         z_src <- column M[src_id] of Z
+29:         z_dst <- column M[dst_id] of Z
+30:         R_eq <- ||z_src - z_dst||^2
+31:         append (src_id, dst_id, R_eq) to L_out
+32:     end for
+33: end for
+34: return L_out
+```
+
+</details>
+
+## 4. Limitations
+
+Although ParasGB fills an important gap in benchmark research for circuit parasitic-effect modeling, several aspects still leave room for improvement as part of this early-stage exploration.
+
+**Insufficient circuit-type coverage.** The current ParasGB dataset mainly covers SRAM and specific analog circuit modules. While these are representative, they do not cover all industrial design scenarios. For example, the layout styles and interconnect logic of complex digital circuits and very-large-scale SoC systems differ significantly from those of analog circuits. As a result, models trained on the current dataset may experience substantial performance degradation when directly transferred to digital-circuit scenarios.
+
+**Challenges in accurate regression prediction.** Parasitic parameters exhibit pronounced long-tailed distributions, which makes extreme-value samples (very large or very small values) difficult to predict accurately. Although discretization (binning) reduces the difficulty of the task, it is essentially a compromise. Industrial applications still require high-precision numerical regression, and meeting that demand remains a core challenge for current algorithms.
+
+**Lack of cross-technology-node validation.** The current dataset is mainly derived from specific advanced technologies. However, physical properties and design rules vary significantly across semiconductor technology generations, such as from 28 nm to 5 nm. Without large-scale cross-technology comparison data, it is difficult to fully validate model transferability to new technology nodes, which limits generalization across different foundries.
+
+**Limited depth of physical-interaction modeling.** Current node features mainly include spatial coordinates and device-size information. In real chips, however, deeper physical effects such as local thermal behavior and complex electromagnetic coupling across multiple metal layers can also affect parasitic parameters. Although existing graph structures can model topological connectivity, they still provide insufficient depth for modeling these three-dimensional physical interactions, and some key physical features may therefore be overlooked.
+
+## 5. Future Directions
+
+### 5.1 Graph Foundation Model Pretraining
+
+Conduct self-supervised pretraining on large-scale circuit graphs to learn general physical laws of circuits, and then adapt to downstream tasks with limited fine-tuning.
+
+### 5.2 Enhanced Spatial-Geometric Awareness
+
+Incorporate 3D layout information and metal-layer attributes more deeply into message passing so that the model can jointly understand:
+
+- topological connectivity
+- three-dimensional relative position
+- routing-coupling relationships
+
+### 5.3 Building a More Comprehensive Evaluation Platform
+
+Future versions are planned to include:
+
+- RF circuits
+- high-speed interfaces
+- large-scale digital logic modules
+- layout data across multiple process nodes
+
+### 5.4 Real-Time Guidance for Design Closure
+
+Move from an offline benchmark toward online design assistance by providing parasitic warnings and optimization suggestions during the layout stage.
+
+## 6. Experiment Details
+
+### 6.1 Data Preprocessing
 
 #### SRAM Task Filtering Rules
 
@@ -486,7 +566,7 @@ Main observations:
 
 All classification tasks use **five equal-width bins**.
 
-### 3.2 Baseline Details
+### 6.2 Baseline Details
 
 This study selects a series of representative graph-learning models for comparative experiments to validate the challenge level of the ParasGB benchmark. The models are grouped as follows.
 
@@ -513,10 +593,7 @@ These models are designed for task-specific pain points in the EDA domain, with 
 - `CirGPS` (Shen et al., 2025c): a circuit-specific model that addresses circuit-data scarcity through subgraph sampling and few-shot/pretraining strategies.
 - `CircuitGCL` (Shen et al., 2025a): a circuit-specific graph-contrastive framework designed to improve representation quality under challenging circuit-data distributions.
 
-
-
-## 4. Additional Task Results
-
+## 7. Additional Task Results
 
 <h3 align="center">Performance of Different Models on Analog Circuits Ground Capacitance Node Classification Task</h3>
 
@@ -631,7 +708,6 @@ These models are designed for task-specific pain points in the EDA domain, with 
     </tr>
   </tbody>
 </table>
-
 
 <h3 align="center">Performance of Different Models on SRAM Circuits Ground Capacitance Node Classification Task</h3>
 
@@ -1089,154 +1165,66 @@ These models are designed for task-specific pain points in the EDA domain, with 
   </tbody>
 </table>
 
+## 8. API Usage
 
+### 8.1 Standardized Evaluation Protocol
 
+ParasGB is deeply integrated with **PyTorch Geometric (PyG)** so that researchers can complete the following steps with only a small amount of code:
 
-## 5. Topology-to-Graph
+- dataset download
+- graph data preprocessing
+- task-level data loading
+- standardized evaluation
 
-### 5.1 Analog Topology-to-Graph
-![Analog2Graph](IMGS/analog2graph.png)
+To support ultra-large circuit graphs, the toolkit provides:
 
-The conversion from analog circuit schematics to graph representations follows the framework shown in the figure. We model each circuit as a heterogeneous graph $\mathcal{G}=(\mathcal{V},\mathcal{E})$. The node set $\mathcal{V}$ contains three types of nodes: *device nodes* representing circuit components, *net nodes* representing interconnect wires, and *pin nodes* representing device terminals. The topological edges $\mathcal{E}_{\text{topo}}$ (shown as black lines) capture circuit connectivity derived from the schematic, specifically through *device-to-pin* and *pin-to-net* connections; these topological relations constitute the input structure obtained from the schematic-to-graph transformation.
+- `NeighborLoader`: for node-level tasks
+- `LinkNeighborLoader`: for edge-level tasks
 
-In contrast, parasitic information is obtained from the extracted parasitic netlist. Blue *pin-to-pin* edges are treated as resistive edges, where the label corresponds to the effective resistance between two pins (see the algorithm in Section 6). In addition, we assign the total ground capacitance of each net as a node-level label on the corresponding net node. These parasitic labels serve as prediction targets in our benchmark.
+Both loaders support caching preprocessed graph data on first use, which reduces repeated computation, improves reproducibility, and avoids experimental discrepancies caused by differences in preprocessing logic.
 
-### 5.2 Sram Topology-to-Graph
-![Sram2Graph](IMGS/Sram2graph.png)
+In addition, ParasGB provides a unified `Evaluator` module that follows the OGB style and automatically reports standardized metrics:
 
+- classification tasks: Accuracy / F1
+- regression tasks: MAE / R²
 
+The dataset object also exposes metadata such as:
 
-The figure illustrates the conversion process from an SRAM circuit schematic to its graph representation. Similar to Figure 1, the circuit is first modeled as a heterogeneous graph, $\mathcal{G}=(\mathcal{V},\mathcal{E})$, where the node set $\mathcal{V}$ consists of three types of nodes: **device nodes**, **net nodes**, and **pin nodes**.
+- train/test splits
+- number of nodes and edges
+- label distributions
 
-The black topological edges represent the connectivity directly derived from the schematic, including **device-to-pin** and **pin-to-net** relations, which describe the fundamental topology of the SRAM cell.
+This makes it easier to compare the real performance of different models across different tasks in a transparent way.
 
-On top of this topological structure, parasitic information extracted from the post-layout netlist is further incorporated into the graph. Specifically:
+### 8.2 ParasGB Usage
 
-- **Blue pin-to-pin edges** denote resistive parasitics, where each edge label corresponds to the effective resistance between two pins.
-- **Orange edges** denote coupling capacitance relations, which characterize the capacitive coupling effects between different pins or nets.
-- In addition, each **net node** is associated with its **total ground capacitance** $C_g$ as a node-level label.
+The core goal of ParasGB is to **lower the barrier to parasitic-parameter learning research**. Its usage style is intentionally close to PyG. Researchers only need to specify:
 
-Therefore, the prediction targets in Figure 2 include not only resistance edge labels and net-level ground capacitance labels, but also coupling capacitance edge labels, enabling a more comprehensive representation of parasitic effects in SRAM circuits.
+- dataset name
+- task level (`node` / `edge`)
+- task type (`classification` / `regression`)
 
-## 6. Algorithms
+The system will then automatically complete raw file download and feature preprocessing.
 
-### 6.1 Matrix-Based Effective Resistance Calculation
+For SRAM graphs with tens of millions of nodes, the toolkit provides subgraph sampling for limited-memory settings to ensure both training efficiency and stability.
 
-> **Purpose.** Compute port-to-port effective resistance efficiently from the resistor netlist by constructing the nodal admittance matrix and querying pairwise resistances through its Cholesky factorization.
+### 8.3 Task Name Reference
+#### SRAM
 
-#### Overview
+- `cg_regr`: node-level ground capacitance regression
+- `cg_class`: node-level ground capacitance classification
+- `cc_regr`: edge-level coupling capacitance regression
+- `cc_class`: edge-level coupling capacitance classification
+- `r_class`: edge-level effective resistance classification
 
-The procedure consists of three stages:
+#### Analog
 
-1. **Build the nodal admittance matrix**
-   - Traverse all resistor elements in the net.
-   - Convert each resistance value `r` into conductance `g = 1 / r`.
-   - Update diagonal and off-diagonal entries according to Kirchhoff's Current Law (KCL).
+- `cg_regr`: node-level ground capacitance regression
+- `cg_class`: node-level ground capacitance classification
+- `r_regr`: edge-level effective resistance regression
+- `r_class`: edge-level effective resistance classification
 
-2. **Construct the reduced invertible matrix**
-   - Select one reference node, usually the ground node.
-   - Remove the corresponding row and column from the admittance matrix.
-   - Obtain the reduced admittance matrix `G_red`.
-
-3. **Query effective resistances between ports**
-   - Compute the Cholesky factor `L` such that `G_red = L L^T`.
-   - Use `Z = L^{-1}` to derive pairwise effective resistances.
-   - For each port pair, compute `R_eq = ||z_src - z_dst||^2`.
-
-#### Pseudocode
-
-<details>
-<summary><strong>Algorithm 1. Matrix-Based Effective Resistance Calculation</strong></summary>
-
-<br>
-
-**Input:** Resistor list `R` of a net, port list `P`  
-**Output:** Effective resistance list `L_out = {(src, dst, val)}`
-
-```text
-1:  L_out <- ∅
-2:  V <- ExtractUniqueNodes(R)
-3:  N <- |V|
-4:  if N < 2 or |P| < 2 then
-5:      return ∅
-6:  end if
-7:  M <- MapNodesToIndices(V)
-
-8:  // Stage 1: Build admittance matrix
-9:  G <- 0_{N×N}
-10: for each (n1, n2, r) in R do
-11:     g <- 1 / r
-12:     u <- M[n1], v <- M[n2]
-13:     G[u,u] <- G[u,u] + g
-14:     G[v,v] <- G[v,v] + g
-15:     G[u,v] <- G[u,v] - g
-16:     G[v,u] <- G[v,u] - g
-17: end for
-
-18: ref <- N - 1
-19: G_red <- G[0:ref, 0:ref]
-
-20: // Stage 2: Cholesky factorization
-21: Compute L such that G_red = L L^T
-22: Z <- L^{-1}
-
-23: // Stage 3: Port-to-port resistance extraction
-24: for k <- 0 to |P| - 1 do
-25:     for l <- k + 1 to |P| - 1 do
-26:         src_id <- P[k]
-27:         dst_id <- P[l]
-28:         z_src <- column M[src_id] of Z
-29:         z_dst <- column M[dst_id] of Z
-30:         R_eq <- ||z_src - z_dst||^2
-31:         append (src_id, dst_id, R_eq) to L_out
-32:     end for
-33: end for
-34: return L_out
-```
-
-</details>
-
-## 7. Limitations
-
-Although ParasGB fills an important gap in benchmark research for circuit parasitic-effect modeling, several aspects still leave room for improvement as part of this early-stage exploration.
-
-**Insufficient circuit-type coverage.** The current ParasGB dataset mainly covers SRAM and specific analog circuit modules. While these are representative, they do not cover all industrial design scenarios. For example, the layout styles and interconnect logic of complex digital circuits and very-large-scale SoC systems differ significantly from those of analog circuits. As a result, models trained on the current dataset may experience substantial performance degradation when directly transferred to digital-circuit scenarios.
-
-**Challenges in accurate regression prediction.** Parasitic parameters exhibit pronounced long-tailed distributions, which makes extreme-value samples (very large or very small values) difficult to predict accurately. Although discretization (binning) reduces the difficulty of the task, it is essentially a compromise. Industrial applications still require high-precision numerical regression, and meeting that demand remains a core challenge for current algorithms.
-
-**Lack of cross-technology-node validation.** The current dataset is mainly derived from specific advanced technologies. However, physical properties and design rules vary significantly across semiconductor technology generations, such as from 28 nm to 5 nm. Without large-scale cross-technology comparison data, it is difficult to fully validate model transferability to new technology nodes, which limits generalization across different foundries.
-
-**Limited depth of physical-interaction modeling.** Current node features mainly include spatial coordinates and device-size information. In real chips, however, deeper physical effects such as local thermal behavior and complex electromagnetic coupling across multiple metal layers can also affect parasitic parameters. Although existing graph structures can model topological connectivity, they still provide insufficient depth for modeling these three-dimensional physical interactions, and some key physical features may therefore be overlooked.
-
-## 8. Future Directions
-
-### 1. Graph Foundation Model Pretraining
-
-Conduct self-supervised pretraining on large-scale circuit graphs to learn general physical laws of circuits, and then adapt to downstream tasks with limited fine-tuning.
-
-### 2. Enhanced Spatial-Geometric Awareness
-
-Incorporate 3D layout information and metal-layer attributes more deeply into message passing so that the model can jointly understand:
-
-- topological connectivity
-- three-dimensional relative position
-- routing-coupling relationships
-
-### 3. Building a More Comprehensive Evaluation Platform
-
-Future versions are planned to include:
-
-- RF circuits
-- high-speed interfaces
-- large-scale digital logic modules
-- layout data across multiple process nodes
-
-### 4. Real-Time Guidance for Design Closure
-
-Move from an offline benchmark toward online design assistance by providing parasitic warnings and optimization suggestions during the layout stage.
-
-
-## 9. Minimal Usage Example
+### 8.4 Minimal Usage Example
 
 ```python
 from parasgb import RCDataset, Evaluator
