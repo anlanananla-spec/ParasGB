@@ -1,4 +1,4 @@
-# ParasGB
+<img width="900" height="335" alt="image" src="https://github.com/user-attachments/assets/85a99abe-b1e3-4a99-abaf-3cca22a438a7" /># ParasGB
 
 ## Table of Contents
 
@@ -510,88 +510,587 @@ Unlike traditional models that only capture local neighborhoods, these models in
 
 These models are designed for task-specific pain points in the EDA domain, with targeted strategies for issues such as circuit-data scarcity and label imbalance.
 
-- `ParaGraph` (Ren et al., 2020): an early representative work in this area that predicts parasitic parameters using hierarchical graph-symbol techniques.
 - `CirGPS` (Shen et al., 2025c): a circuit-specific model that addresses circuit-data scarcity through subgraph sampling and few-shot/pretraining strategies.
 - `CircuitGCL` (Shen et al., 2025a): a circuit-specific graph-contrastive framework designed to improve representation quality under challenging circuit-data distributions.
 
-### 3.3 Comparative Performance Results
 
-Performance results of different models on SRAM circuits:
 
-### Performance of Different Models on SRAM Circuits Ground Capacitance Node Regression Task
+## 4. Additional Task Results
 
-| Metric | sram+digtime+timing_ctrl MAE ↓ | sram+digtime+timing_ctrl R² ↑ | sandwich MAE ↓ | sandwich R² ↑ | ultra8t MAE ↓ | ultra8t R² ↑ | array_128_32_8t MAE ↓ | array_128_32_8t R² ↑ |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| GCN | 0.0461 | 0.8401 | 0.1876 | 0.1636 | 0.0192 | 0.5446 | 0.1199 | -0.1967 |
-| GAT | 0.0454 | 0.8469 | 0.1838 | 0.2159 | 0.0955 | 0.5060 | 0.1211 | -0.2518 |
-| GraphSAGE | 0.0413 | 0.8800 | 0.1964 | 0.0585 | 0.1093 | 0.2620 | 0.2813 | -2.0157 |
-| PNA | 0.0415 | 0.8813 | 0.1845 | 0.3589 | 0.0894 | 0.4561 | 0.2024 | -0.9577 |
-| SGFormer | 0.0424 | 0.8729 | 0.2297 | -0.1733 | 0.1619 | -0.3985 | 0.2934 | -3.2101 |
-| PolyNormer | 0.0423 | 0.8667 | 0.1938 | 0.1186 | 0.1563 | -0.5618 | 0.1699 | -1.1344 |
-| CirGPS | 0.0063 | 0.9568 | 0.0298 | 0.6574 | 0.0222 | 0.7882 | 0.0194 | 0.8702 |
-| CircuitGCL | 0.0511 | 0.8792 | 0.3558 | -0.4768 | 0.3359 | -0.3439 | 0.3314 | -0.6812 |
 
-Performance results of different models on the analog ground-capacitance node regression task:
+<h3 align="center">Performance of Different Models on Analog Circuits Ground Capacitance Node Classification Task</h3>
 
-### Performance of Different Models on Analog Circuits Ground Capacitance Node Regression Task
+<table>
+  <thead>
+    <tr>
+      <th rowspan="2">Model</th>
+      <th colspan="2">1-4, 6, 8-12, 15-18</th>
+      <th colspan="2">5</th>
+      <th colspan="2">14</th>
+      <th colspan="2">20</th>
+    </tr>
+    <tr>
+      <th>Accuracy ↑</th>
+      <th>F1-Score ↑</th>
+      <th>Accuracy ↑</th>
+      <th>F1-Score ↑</th>
+      <th>Accuracy ↑</th>
+      <th>F1-Score ↑</th>
+      <th>Accuracy ↑</th>
+      <th>F1-Score ↑</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>GCN</td>
+      <td>0.8718</td>
+      <td>0.5357</td>
+      <td>0.9935</td>
+      <td>0.4727</td>
+      <td>0.9740</td>
+      <td>0.3127</td>
+      <td>0.9101</td>
+      <td>0.3426</td>
+    </tr>
+    <tr>
+      <td>GAT</td>
+      <td>0.7949</td>
+      <td>0.3000</td>
+      <td>0.9941</td>
+      <td>0.4991</td>
+      <td>0.9761</td>
+      <td>0.3239</td>
+      <td>0.9101</td>
+      <td>0.3426</td>
+    </tr>
+    <tr>
+      <td>GraphSAGE</td>
+      <td>0.7949</td>
+      <td>0.3000</td>
+      <td>0.9946</td>
+      <td>0.8412</td>
+      <td>0.9761</td>
+      <td>0.3322</td>
+      <td>0.9213</td>
+      <td>0.5640</td>
+    </tr>
+    <tr>
+      <td>PNA</td>
+      <td>0.8974</td>
+      <td>0.5804</td>
+      <td>0.9941</td>
+      <td>0.7028</td>
+      <td>0.9783</td>
+      <td>0.5189</td>
+      <td>0.9326</td>
+      <td>0.7926</td>
+    </tr>
+    <tr>
+      <td>SGFormer</td>
+      <td>0.8462</td>
+      <td>0.4375</td>
+      <td>0.9941</td>
+      <td>0.4991</td>
+      <td>0.9783</td>
+      <td>0.4122</td>
+      <td>0.9101</td>
+      <td>0.3426</td>
+    </tr>
+    <tr>
+      <td>PolyNormer</td>
+      <td>0.8974</td>
+      <td>0.6476</td>
+      <td>0.9941</td>
+      <td>0.7028</td>
+      <td>0.9783</td>
+      <td>0.4922</td>
+      <td>0.9213</td>
+      <td>0.5640</td>
+    </tr>
+    <tr>
+      <td>CirGPS</td>
+      <td>0.8460</td>
+      <td>0.3806</td>
+      <td>0.9911</td>
+      <td>0.2492</td>
+      <td>0.9740</td>
+      <td>0.3215</td>
+      <td>0.8876</td>
+      <td>0.2714</td>
+    </tr>
+    <tr>
+      <td>CircuitGCL</td>
+      <td>0.8966</td>
+      <td>0.9138</td>
+      <td>0.9855</td>
+      <td>0.3318</td>
+      <td>0.9681</td>
+      <td>0.3989</td>
+      <td>0.8981</td>
+      <td>0.3527</td>
+    </tr>
+  </tbody>
+</table>
 
-| Metric | 1-4, 6, 8-12, 15-18 MAE ↓ | 1-4, 6, 8-12, 15-18 R² ↑ | 5 MAE ↓ | 5 R² ↑ | 14 MAE ↓ | 14 R² ↑ | 20 MAE ↓ | 20 R² ↑ |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| GCN | 0.0272 | 0.9570 | 0.0171 | 0.4200 | 0.0216 | 0.8460 | 0.0284 | 0.8632 |
-| GAT | 0.0367 | 0.9336 | 0.0078 | 0.4879 | 0.0107 | 0.8749 | 0.0230 | 0.8270 |
-| GraphSAGE | 0.0473 | 0.8861 | 0.0267 | 0.3098 | 0.0311 | 0.8106 | 0.0371 | 0.7869 |
-| PNA | 0.0292 | 0.9502 | 0.0089 | 0.4214 | 0.0094 | 0.8507 | 0.0211 | 0.8423 |
-| SGFormer | 0.0798 | 0.7283 | 0.0340 | -0.0393 | 0.0339 | 0.5936 | 0.0571 | 0.4162 |
-| PolyNormer | 0.0298 | 0.9667 | 0.0155 | 0.3828 | 0.0148 | 0.8638 | 0.0281 | 0.7959 |
-| CirGPS | 0.0783 | 0.8384 | 0.0932 | -2.4965 | 0.1034 | -0.3204 | 0.1100 | 0.1395 |
-| CircuitGCL | 0.0386 | 0.9605 | 0.0225 | 0.6119 | 0.0227 | 0.8679 | 0.0299 | 0.8126 |
 
-## 4. Additional Regression Task Results
+<h3 align="center">Performance of Different Models on SRAM Circuits Ground Capacitance Node Classification Task</h3>
 
-Performance of different models on the SRAM coupling-capacitance edge regression task:
+<table>
+  <thead>
+    <tr>
+      <th rowspan="2">Model</th>
+      <th colspan="2">sram+digtime+timing_ctrl</th>
+      <th colspan="2">sandwich</th>
+      <th colspan="2">ultra8t</th>
+      <th colspan="2">array_128_32_8t</th>
+    </tr>
+    <tr>
+      <th>Accuracy ↑</th>
+      <th>F1-Score ↑</th>
+      <th>Accuracy ↑</th>
+      <th>F1-Score ↑</th>
+      <th>Accuracy ↑</th>
+      <th>F1-Score ↑</th>
+      <th>Accuracy ↑</th>
+      <th>F1-Score ↑</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>GCN</td>
+      <td>0.6385</td>
+      <td>0.5542</td>
+      <td>0.4000</td>
+      <td>0.2437</td>
+      <td>0.5410</td>
+      <td>0.3321</td>
+      <td>0.5045</td>
+      <td>0.2688</td>
+    </tr>
+    <tr>
+      <td>GAT</td>
+      <td>0.6473</td>
+      <td>0.2293</td>
+      <td>0.3541</td>
+      <td>0.2293</td>
+      <td>0.4976</td>
+      <td>0.2936</td>
+      <td>0.4340</td>
+      <td>0.3167</td>
+    </tr>
+    <tr>
+      <td>GraphSAGE</td>
+      <td>0.6480</td>
+      <td>0.5799</td>
+      <td>0.3343</td>
+      <td>0.2105</td>
+      <td>0.4932</td>
+      <td>0.2853</td>
+      <td>0.5909</td>
+      <td>0.3575</td>
+    </tr>
+    <tr>
+      <td>PNA</td>
+      <td>0.6511</td>
+      <td>0.5923</td>
+      <td>0.4431</td>
+      <td>0.2619</td>
+      <td>0.5980</td>
+      <td>0.3095</td>
+      <td>0.4983</td>
+      <td>0.3399</td>
+    </tr>
+    <tr>
+      <td>SGFormer</td>
+      <td>0.6193</td>
+      <td>0.4345</td>
+      <td>0.4594</td>
+      <td>0.2734</td>
+      <td>0.6159</td>
+      <td>0.3373</td>
+      <td>0.5200</td>
+      <td>0.3310</td>
+    </tr>
+    <tr>
+      <td>PolyNormer</td>
+      <td>0.6511</td>
+      <td>0.5895</td>
+      <td>0.4398</td>
+      <td>0.2532</td>
+      <td>0.5740</td>
+      <td>0.3218</td>
+      <td>0.5654</td>
+      <td>0.3503</td>
+    </tr>
+    <tr>
+      <td>CirGPS</td>
+      <td>0.9140</td>
+      <td>0.2524</td>
+      <td>0.8690</td>
+      <td>0.2400</td>
+      <td>0.9331</td>
+      <td>0.2963</td>
+      <td>0.9497</td>
+      <td>0.3959</td>
+    </tr>
+    <tr>
+      <td>CircuitGCL</td>
+      <td>0.7258</td>
+      <td>0.6344</td>
+      <td>0.3867</td>
+      <td>0.2751</td>
+      <td>0.3517</td>
+      <td>0.2724</td>
+      <td>0.4043</td>
+      <td>0.2853</td>
+    </tr>
+  </tbody>
+</table>
 
-### Performance of Different Models on SRAM Circuits Coupling Capacitance Edge Regression Task
+<h3 align="center">Performance of Different Models on Analog Circuits Effective Resistance Edge Classification Task</h3>
 
-| Metric | sram+digtime+timing_ctrl MAE ↓ | sram+digtime+timing_ctrl R² ↑ | sandwich MAE ↓ | sandwich R² ↑ | ultra8t MAE ↓ | ultra8t R² ↑ | array_128_32_8t MAE ↓ | array_128_32_8t R² ↑ |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| GCN | 0.0717 | 0.5008 | 0.1073 | 0.3511 | 0.0971 | 0.2866 | 0.0960 | 0.2543 |
-| GAT | 0.0717 | 0.4960 | 0.1075 | 0.3504 | 0.0962 | 0.2969 | 0.0956 | 0.2581 |
-| GraphSAGE | 0.0747 | 0.4701 | 0.1078 | 0.3427 | 0.0920 | 0.3334 | 0.0783 | 0.4182 |
-| PNA | 0.0715 | 0.5053 | 0.1067 | 0.3527 | 0.0935 | 0.3083 | 0.0863 | 0.3554 |
-| SGFormer | 0.0766 | 0.4592 | 0.1081 | 0.3212 | 0.0930 | 0.3093 | 0.0746 | 0.4378 |
-| PolyNormer | 0.0709 | 0.5053 | 0.1053 | 0.3449 | 0.0934 | 0.2951 | 0.0835 | 0.3797 |
-| CirGPS | 0.0714 | 0.4413 | 0.1093 | 0.3412 | 0.0933 | 0.3284 | 0.0723 | 0.3979 |
-| CircuitGCL | 0.0600 | 0.6234 | 0.1109 | 0.3229 | 0.1005 | 0.2507 | 0.0886 | 0.2650 |
+<table>
+  <thead>
+    <tr>
+      <th rowspan="2">Model</th>
+      <th colspan="2">1-4, 6, 8-12, 15-18</th>
+      <th colspan="2">5</th>
+      <th colspan="2">14</th>
+      <th colspan="2">20</th>
+    </tr>
+    <tr>
+      <th>Accuracy ↑</th>
+      <th>F1-Score ↑</th>
+      <th>Accuracy ↑</th>
+      <th>F1-Score ↑</th>
+      <th>Accuracy ↑</th>
+      <th>F1-Score ↑</th>
+      <th>Accuracy ↑</th>
+      <th>F1-Score ↑</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>GCN</td>
+      <td>0.5314</td>
+      <td>0.4462</td>
+      <td>0.8474</td>
+      <td>0.4678</td>
+      <td>0.5007</td>
+      <td>0.2875</td>
+      <td>0.3316</td>
+      <td>0.3323</td>
+    </tr>
+    <tr>
+      <td>GAT</td>
+      <td>0.5216</td>
+      <td>0.4240</td>
+      <td>0.8018</td>
+      <td>0.3424</td>
+      <td>0.2735</td>
+      <td>0.1651</td>
+      <td>0.1634</td>
+      <td>0.1255</td>
+    </tr>
+    <tr>
+      <td>GraphSAGE</td>
+      <td>0.5164</td>
+      <td>0.4238</td>
+      <td>0.8415</td>
+      <td>0.4505</td>
+      <td>0.3934</td>
+      <td>0.2437</td>
+      <td>0.3381</td>
+      <td>0.3395</td>
+    </tr>
+    <tr>
+      <td>PNA</td>
+      <td>0.4649</td>
+      <td>0.2971</td>
+      <td>0.8132</td>
+      <td>0.3918</td>
+      <td>0.3058</td>
+      <td>0.1995</td>
+      <td>0.1060</td>
+      <td>0.0809</td>
+    </tr>
+    <tr>
+      <td>SGFormer</td>
+      <td>0.5199</td>
+      <td>0.5163</td>
+      <td>0.8684</td>
+      <td>0.5575</td>
+      <td>0.4024</td>
+      <td>0.3316</td>
+      <td>0.3638</td>
+      <td>0.3618</td>
+    </tr>
+    <tr>
+      <td>PolyNormer</td>
+      <td>0.5017</td>
+      <td>0.4229</td>
+      <td>0.2636</td>
+      <td>0.1747</td>
+      <td>0.3565</td>
+      <td>0.2049</td>
+      <td>0.1859</td>
+      <td>0.2265</td>
+    </tr>
+    <tr>
+      <td>CirGPS</td>
+      <td>0.6491</td>
+      <td>0.6415</td>
+      <td>0.6851</td>
+      <td>0.3573</td>
+      <td>0.2978</td>
+      <td>0.2778</td>
+      <td>0.3360</td>
+      <td>0.2386</td>
+    </tr>
+    <tr>
+      <td>CircuitGCL</td>
+      <td>0.6383</td>
+      <td>0.4678</td>
+      <td>0.6440</td>
+      <td>0.3078</td>
+      <td>0.2881</td>
+      <td>0.2349</td>
+      <td>0.4204</td>
+      <td>0.4288</td>
+    </tr>
+  </tbody>
+</table>
 
-Performance of different models on the analog effective-resistance edge regression task:
+<h3 align="center">Performance of Different Models on SRAM Circuits Ground Capacitance Node Regression Task</h3>
 
-### Performance of Different Models on Analog Circuits Effective Resistance Edge Regression Task
+<table>
+  <thead>
+    <tr>
+      <th rowspan="2">Model</th>
+      <th colspan="2">sram+digtime+timing_ctrl</th>
+      <th colspan="2">sandwich</th>
+      <th colspan="2">ultra8t</th>
+      <th colspan="2">array_128_32_8t</th>
+    </tr>
+    <tr>
+      <th>MAE ↓</th>
+      <th>R² ↑</th>
+      <th>MAE ↓</th>
+      <th>R² ↑</th>
+      <th>MAE ↓</th>
+      <th>R² ↑</th>
+      <th>MAE ↓</th>
+      <th>R² ↑</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>GCN</td>
+      <td>0.0461</td>
+      <td>0.8401</td>
+      <td>0.1876</td>
+      <td>0.1636</td>
+      <td>0.0192</td>
+      <td>0.5446</td>
+      <td>0.1199</td>
+      <td>-0.1967</td>
+    </tr>
+    <tr>
+      <td>GAT</td>
+      <td>0.0454</td>
+      <td>0.8469</td>
+      <td>0.1838</td>
+      <td>0.2159</td>
+      <td>0.0955</td>
+      <td>0.5060</td>
+      <td>0.1211</td>
+      <td>-0.2518</td>
+    </tr>
+    <tr>
+      <td>GraphSAGE</td>
+      <td>0.0413</td>
+      <td>0.8800</td>
+      <td>0.1964</td>
+      <td>0.0585</td>
+      <td>0.1093</td>
+      <td>0.2620</td>
+      <td>0.2813</td>
+      <td>-2.0157</td>
+    </tr>
+    <tr>
+      <td>PNA</td>
+      <td>0.0415</td>
+      <td>0.8813</td>
+      <td>0.1845</td>
+      <td>0.3589</td>
+      <td>0.0894</td>
+      <td>0.4561</td>
+      <td>0.2024</td>
+      <td>-0.9577</td>
+    </tr>
+    <tr>
+      <td>SGFormer</td>
+      <td>0.0424</td>
+      <td>0.8729</td>
+      <td>0.2297</td>
+      <td>-0.1733</td>
+      <td>0.1619</td>
+      <td>-0.3985</td>
+      <td>0.2934</td>
+      <td>-3.2101</td>
+    </tr>
+    <tr>
+      <td>PolyNormer</td>
+      <td>0.0423</td>
+      <td>0.8667</td>
+      <td>0.1938</td>
+      <td>0.1186</td>
+      <td>0.1563</td>
+      <td>-0.5618</td>
+      <td>0.1699</td>
+      <td>-1.1344</td>
+    </tr>
+    <tr>
+      <td>CirGPS</td>
+      <td>0.0063</td>
+      <td>0.9568</td>
+      <td>0.0298</td>
+      <td>0.6574</td>
+      <td>0.0222</td>
+      <td>0.7882</td>
+      <td>0.0194</td>
+      <td>0.8702</td>
+    </tr>
+    <tr>
+      <td>CircuitGCL</td>
+      <td>0.0511</td>
+      <td>0.8792</td>
+      <td>0.3558</td>
+      <td>-0.4768</td>
+      <td>0.3359</td>
+      <td>-0.3439</td>
+      <td>0.3314</td>
+      <td>-0.6812</td>
+    </tr>
+  </tbody>
+</table>
 
-| Metric | 1-4, 6, 8-12, 15-18 MAE ↓ | 1-4, 6, 8-12, 15-18 R² ↑ | 5 MAE ↓ | 5 R² ↑ | 14 MAE ↓ | 14 R² ↑ | 20 MAE ↓ | 20 R² ↑ |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| GCN | 0.0587 | 0.8018 | 0.0637 | 0.4772 | 0.1513 | -0.5502 | 0.1687 | 0.6526 |
-| GAT | 0.0550 | 0.8159 | 0.0717 | 0.4891 | 0.1533 | -0.6171 | 0.1871 | 0.5711 |
-| GraphSAGE | 0.0461 | 0.8789 | 0.0511 | 0.7451 | 0.1473 | -0.5093 | 0.1396 | 0.7057 |
-| PNA | 0.0439 | 0.9051 | 0.0408 | 0.8565 | 0.1031 | 0.2984 | 0.1463 | 0.7209 |
-| SGFormer | 0.0489 | 0.8721 | 0.0397 | 0.8127 | 0.1224 | 0.0443 | 0.1439 | 0.6474 |
-| PolyNormer | 0.0407 | 0.9035 | 0.0575 | 0.6137 | 0.0976 | 0.3099 | 0.1314 | 0.6991 |
-| CirGPS | 0.0769 | 0.7443 | 0.0719 | 0.6890 | 0.2027 | 0.5314 | 0.0992 | 0.3049 |
-| CircuitGCL | 0.0885 | 0.6410 | 0.2365 | -1.3683 | 0.1414 | -0.4614 | 0.2088 | 0.4782 |
+<h3 align="center">Performance of Different Models on SRAM Circuits Ground Capacitance Node Regression Task</h3>
 
-Performance of different models on the SRAM effective-resistance node classification task:
+<table>
+  <thead>
+    <tr>
+      <th rowspan="2">Model</th>
+      <th colspan="2">sram+digtime+timing_ctrl</th>
+      <th colspan="2">sandwich</th>
+      <th colspan="2">ultra8t</th>
+      <th colspan="2">array_128_32_8t</th>
+    </tr>
+    <tr>
+      <th>MAE ↓</th>
+      <th>R² ↑</th>
+      <th>MAE ↓</th>
+      <th>R² ↑</th>
+      <th>MAE ↓</th>
+      <th>R² ↑</th>
+      <th>MAE ↓</th>
+      <th>R² ↑</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>GCN</td>
+      <td>0.0461</td>
+      <td>0.8401</td>
+      <td>0.1876</td>
+      <td>0.1636</td>
+      <td>0.0192</td>
+      <td>0.5446</td>
+      <td>0.1199</td>
+      <td>-0.1967</td>
+    </tr>
+    <tr>
+      <td>GAT</td>
+      <td>0.0454</td>
+      <td>0.8469</td>
+      <td>0.1838</td>
+      <td>0.2159</td>
+      <td>0.0955</td>
+      <td>0.5060</td>
+      <td>0.1211</td>
+      <td>-0.2518</td>
+    </tr>
+    <tr>
+      <td>GraphSAGE</td>
+      <td>0.0413</td>
+      <td>0.8800</td>
+      <td>0.1964</td>
+      <td>0.0585</td>
+      <td>0.1093</td>
+      <td>0.2620</td>
+      <td>0.2813</td>
+      <td>-2.0157</td>
+    </tr>
+    <tr>
+      <td>PNA</td>
+      <td>0.0415</td>
+      <td>0.8813</td>
+      <td>0.1845</td>
+      <td>0.3589</td>
+      <td>0.0894</td>
+      <td>0.4561</td>
+      <td>0.2024</td>
+      <td>-0.9577</td>
+    </tr>
+    <tr>
+      <td>SGFormer</td>
+      <td>0.0424</td>
+      <td>0.8729</td>
+      <td>0.2297</td>
+      <td>-0.1733</td>
+      <td>0.1619</td>
+      <td>-0.3985</td>
+      <td>0.2934</td>
+      <td>-3.2101</td>
+    </tr>
+    <tr>
+      <td>PolyNormer</td>
+      <td>0.0423</td>
+      <td>0.8667</td>
+      <td>0.1938</td>
+      <td>0.1186</td>
+      <td>0.1563</td>
+      <td>-0.5618</td>
+      <td>0.1699</td>
+      <td>-1.1344</td>
+    </tr>
+    <tr>
+      <td>CirGPS</td>
+      <td>0.0063</td>
+      <td>0.9568</td>
+      <td>0.0298</td>
+      <td>0.6574</td>
+      <td>0.0222</td>
+      <td>0.7882</td>
+      <td>0.0194</td>
+      <td>0.8702</td>
+    </tr>
+    <tr>
+      <td>CircuitGCL</td>
+      <td>0.0511</td>
+      <td>0.8792</td>
+      <td>0.3558</td>
+      <td>-0.4768</td>
+      <td>0.3359</td>
+      <td>-0.3439</td>
+      <td>0.3314</td>
+      <td>-0.6812</td>
+    </tr>
+  </tbody>
+</table>
 
-### Performance of Different Models on SRAM Circuits Effective Resistance Node Classification Task
 
-| Metric | sram+digtime+timing_ctrl Accuracy ↑ | sram+digtime+timing_ctrl F1-Score ↑ | sandwich Accuracy ↑ | sandwich F1-Score ↑ | ultra8t Accuracy ↑ | ultra8t F1-Score ↑ | array_128_32_8t Accuracy ↑ | array_128_32_8t F1-Score ↑ |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| GCN | 0.9608 | 0.9339 | 0.5738 | 0.5146 | 0.2440 | 0.1961 | 0.7789 | 0.4610 |
-| GAT | 0.9528 | 0.9217 | 0.5273 | 0.3453 | 0.9534 | 0.4979 | 0.9951 | 0.8528 |
-| GraphSAGE | 0.9529 | 0.9224 | 0.5281 | 0.3462 | 0.9863 | 0.4966 | 0.9953 | 0.8555 |
-| PNA | 0.9771 | 0.9563 | 0.6011 | 0.5234 | 0.9145 | 0.4984 | 0.9978 | 0.8132 |
-| SGFormer | 0.8003 | 0.7540 | 0.5280 | 0.3456 | 0.9982 | 0.4996 | 0.9951 | 0.8489 |
-| PolyNormer | 0.8177 | 0.7726 | 0.5105 | 0.3807 | 0.9416 | 0.4849 | 0.9951 | 0.8497 |
-| CirGPS | 0.7832 | 0.7211 | 0.5692 | 0.4011 | 0.8250 | 0.4732 | 0.9989 | 0.8336 |
-| CircuitGCL | 0.8842 | 0.8734 | 0.9918 | 0.4980 | 0.4385 | 0.3691 | 0.9987 | 0.4997 |
+
 
 ## 5. Topology-to-Graph
 
